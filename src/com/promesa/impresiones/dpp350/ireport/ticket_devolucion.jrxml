@@ -1,0 +1,641 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ticket_devolucion" pageWidth="216" pageHeight="320" columnWidth="213" leftMargin="0" rightMargin="3" topMargin="0" bottomMargin="0" whenResourceMissingType="Empty" isIgnorePagination="true" uuid="1a4abc79-f052-49ee-85c4-2eaf1ec9f2e9">
+	<property name="ireport.zoom" value="3.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="style" fontName="DFKai-SB" fontSize="8" isBold="true"/>
+	<parameter name="titulo" class="java.lang.String"/>
+	<parameter name="nroSeguimiento" class="java.lang.String"/>
+	<parameter name="fecha" class="java.lang.String"/>
+	<parameter name="cliente" class="java.lang.String"/>
+	<parameter name="ciudad" class="java.lang.String"/>
+	<parameter name="vendedor" class="java.lang.String"/>
+	<parameter name="fecFactura" class="java.lang.String"/>
+	<parameter name="facSap" class="java.lang.String"/>
+	<parameter name="facSri" class="java.lang.String"/>
+	<parameter name="nroSello" class="java.lang.String"/>
+	<parameter name="fud" class="java.lang.String"/>
+	<parameter name="guiaTransporte" class="java.lang.String"/>
+	<parameter name="nroBulto" class="java.lang.String"/>
+	<parameter name="tipo" class="java.lang.String"/>
+	<parameter name="contacto" class="java.lang.String"/>
+	<parameter name="motivo" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT '000010' AS posicion,
+	   '50647' AS material,
+	   '1' AS cantidad,
+	   'JGO' AS um,
+	   'SILICON RTV 26BR ROJO 3 OZ.' AS denominacion,
+	   '0.50' AS precioNeto,
+	   '4.99' AS valorNeto
+UNION ALL
+SELECT '000020' AS posicion,
+	   '50644' AS material,
+	   '2' AS cantidad,
+	   'UN' AS um,
+	   'SILICON "ABRO" 1000 TRANSPARENTE' AS denominacion,
+	   '12.52' AS precioNeto,
+	   '125.15' AS valorNeto
+UNION ALL
+SELECT '000030' AS posicion,
+	   '50645' AS material,
+	   '3' AS cantidad,
+	   'UN' AS um,
+	   'SILICON "ABRO" 1200 BLANCO' AS denominacion,
+	   '1.14' AS precioNeto,
+	   '11.36' AS valorNeto
+UNION ALL
+SELECT '000010' AS posicion,
+	   '50647' AS material,
+	   '4' AS cantidad,
+	   'JGO' AS um,
+	   'SILICON RTV 26BR ROJO 3 OZ.' AS denominacion,
+	   '0.50' AS precioNeto,
+	   '4.99' AS valorNeto
+UNION ALL
+SELECT '000020' AS posicion,
+	   '50644' AS material,
+	   '5' AS cantidad,
+	   'UN' AS um,
+	   'SILICON "ABRO" 1000 TRANSPARENTE' AS denominacion,
+	   '12.52' AS precioNeto,
+	   '125.15' AS valorNeto
+UNION ALL
+SELECT '000030' AS posicion,
+	   '50645' AS material,
+	   '6' AS cantidad,
+	   'UN' AS um,
+	   'SILICON "ABRO" 1200 BLANCO' AS denominacion,
+	   '1.14' AS precioNeto,
+	   '11.36' AS valorNeto
+UNION ALL
+SELECT '000010' AS posicion,
+	   '50647' AS material,
+	   '7' AS cantidad,
+	   'JGO' AS um,
+	   'SILICON RTV 26BR ROJO 3 OZ.' AS denominacion,
+	   '0.50' AS precioNeto,
+	   '4.99' AS valorNeto
+UNION ALL
+SELECT '000020' AS posicion,
+	   '50644' AS material,
+	   '8' AS cantidad,
+	   'UN' AS um,
+	   'SILICON "ABRO" 1000 TRANSPARENTE' AS denominacion,
+	   '12.52' AS precioNeto,
+	   '125.15' AS valorNeto
+UNION ALL
+SELECT '000030' AS posicion,
+	   '50645' AS material,
+	   '9' AS cantidad,
+	   'UN' AS um,
+	   'SILICON "ABRO" 1200 BLANCO' AS denominacion,
+	   '1.14' AS precioNeto,
+	   '11.36' AS valorNeto
+UNION ALL
+SELECT '000010' AS posicion,
+	   '50647' AS material,
+	   '10' AS cantidad,
+	   'JGO' AS um,
+	   'SILICON RTV 26BR ROJO 3 OZ.' AS denominacion,
+	   '0.50' AS precioNeto,
+	   '4.99' AS valorNeto
+UNION ALL
+SELECT '000020' AS posicion,
+	   '50644' AS material,
+	   '11' AS cantidad,
+	   'UN' AS um,
+	   'SILICON "ABRO" 1000 TRANSPARENTE' AS denominacion,
+	   '12.52' AS precioNeto,
+	   '125.15' AS valorNeto
+UNION ALL
+SELECT '000030' AS posicion,
+	   '50645' AS material,
+	   '12' AS cantidad,
+	   'UN' AS um,
+	   'SILICON "ABRO" 1200 BLANCO' AS denominacion,
+	   '1.14' AS precioNeto,
+	   '11.36' AS valorNeto
+UNION ALL
+SELECT '000010' AS posicion,
+	   '50647' AS material,
+	   '13' AS cantidad,
+	   'JGO' AS um,
+	   'SILICON RTV 26BR ROJO 3 OZ.' AS denominacion,
+	   '0.50' AS precioNeto,
+	   '4.99' AS valorNeto
+UNION ALL
+SELECT '000020' AS posicion,
+	   '50644' AS material,
+	   '14' AS cantidad,
+	   'UN' AS um,
+	   'SILICON "ABRO" 1000 TRANSPARENTE' AS denominacion,
+	   '12.52' AS precioNeto,
+	   '125.15' AS valorNeto
+UNION ALL
+SELECT '000030' AS posicion,
+	   '50645' AS material,
+	   '15' AS cantidad,
+	   'UN' AS um,
+	   'SILICON "ABRO" 1200 BLANCO' AS denominacion,
+	   '1.14' AS precioNeto,
+	   '11.36' AS valorNeto
+UNION ALL
+SELECT '000010' AS posicion,
+	   '50647' AS material,
+	   '16' AS cantidad,
+	   'JGO' AS um,
+	   'SILICON RTV 26BR ROJO 3 OZ.' AS denominacion,
+	   '0.50' AS precioNeto,
+	   '4.99' AS valorNeto
+UNION ALL
+SELECT '000020' AS posicion,
+	   '50644' AS material,
+	   '17' AS cantidad,
+	   'UN' AS um,
+	   'SILICON "ABRO" 1000 TRANSPARENTE' AS denominacion,
+	   '12.52' AS precioNeto,
+	   '125.15' AS valorNeto UNION ALL
+SELECT '000010' AS posicion,
+	   '50647' AS material,
+	   '1' AS cantidad,
+	   'JGO' AS um,
+	   'SILICON RTV 26BR ROJO 3 OZ.' AS denominacion,
+	   '0.50' AS precioNeto,
+	   '4.99' AS valorNeto
+UNION ALL
+SELECT '000020' AS posicion,
+	   '50644' AS material,
+	   '2' AS cantidad,
+	   'UN' AS um,
+	   'SILICON "ABRO" 1000 TRANSPARENTE' AS denominacion,
+	   '12.52' AS precioNeto,
+	   '125.15' AS valorNeto
+UNION ALL
+SELECT '000030' AS posicion,
+	   '50645' AS material,
+	   '3' AS cantidad,
+	   'UN' AS um,
+	   'SILICON "ABRO" 1200 BLANCO' AS denominacion,
+	   '1.14' AS precioNeto,
+	   '11.36' AS valorNeto
+UNION ALL
+SELECT '000010' AS posicion,
+	   '50647' AS material,
+	   '4' AS cantidad,
+	   'JGO' AS um,
+	   'SILICON RTV 26BR ROJO 3 OZ.' AS denominacion,
+	   '0.50' AS precioNeto,
+	   '4.99' AS valorNeto
+UNION ALL
+SELECT '000020' AS posicion,
+	   '50644' AS material,
+	   '5' AS cantidad,
+	   'UN' AS um,
+	   'SILICON "ABRO" 1000 TRANSPARENTE' AS denominacion,
+	   '12.52' AS precioNeto,
+	   '125.15' AS valorNeto
+UNION ALL
+SELECT '000030' AS posicion,
+	   '50645' AS material,
+	   '6' AS cantidad,
+	   'UN' AS um,
+	   'SILICON "ABRO" 1200 BLANCO' AS denominacion,
+	   '1.14' AS precioNeto,
+	   '11.36' AS valorNeto
+UNION ALL
+SELECT '000010' AS posicion,
+	   '50647' AS material,
+	   '7' AS cantidad,
+	   'JGO' AS um,
+	   'SILICON RTV 26BR ROJO 3 OZ.' AS denominacion,
+	   '0.50' AS precioNeto,
+	   '4.99' AS valorNeto
+UNION ALL
+SELECT '000020' AS posicion,
+	   '50644' AS material,
+	   '8' AS cantidad,
+	   'UN' AS um,
+	   'SILICON "ABRO" 1000 TRANSPARENTE' AS denominacion,
+	   '12.52' AS precioNeto,
+	   '125.15' AS valorNeto
+UNION ALL
+SELECT '000030' AS posicion,
+	   '50645' AS material,
+	   '9' AS cantidad,
+	   'UN' AS um,
+	   'SILICON "ABRO" 1200 BLANCO' AS denominacion,
+	   '1.14' AS precioNeto,
+	   '11.36' AS valorNeto
+UNION ALL
+SELECT '000010' AS posicion,
+	   '50647' AS material,
+	   '10' AS cantidad,
+	   'JGO' AS um,
+	   'SILICON RTV 26BR ROJO 3 OZ.' AS denominacion,
+	   '0.50' AS precioNeto,
+	   '4.99' AS valorNeto
+UNION ALL
+SELECT '000020' AS posicion,
+	   '50644' AS material,
+	   '11' AS cantidad,
+	   'UN' AS um,
+	   'SILICON "ABRO" 1000 TRANSPARENTE' AS denominacion,
+	   '12.52' AS precioNeto,
+	   '125.15' AS valorNeto
+UNION ALL
+SELECT '000030' AS posicion,
+	   '50645' AS material,
+	   '12' AS cantidad,
+	   'UN' AS um,
+	   'SILICON "ABRO" 1200 BLANCO' AS denominacion,
+	   '1.14' AS precioNeto,
+	   '11.36' AS valorNeto
+UNION ALL
+SELECT '000010' AS posicion,
+	   '50647' AS material,
+	   '13' AS cantidad,
+	   'JGO' AS um,
+	   'SILICON RTV 26BR ROJO 3 OZ.' AS denominacion,
+	   '0.50' AS precioNeto,
+	   '4.99' AS valorNeto
+UNION ALL
+SELECT '000020' AS posicion,
+	   '50644' AS material,
+	   '14' AS cantidad,
+	   'UN' AS um,
+	   'SILICON "ABRO" 1000 TRANSPARENTE' AS denominacion,
+	   '12.52' AS precioNeto,
+	   '125.15' AS valorNeto
+UNION ALL
+SELECT '000030' AS posicion,
+	   '50645' AS material,
+	   '15' AS cantidad,
+	   'UN' AS um,
+	   'SILICON "ABRO" 1200 BLANCO' AS denominacion,
+	   '1.14' AS precioNeto,
+	   '11.36' AS valorNeto
+UNION ALL
+SELECT '000010' AS posicion,
+	   '50647' AS material,
+	   '16' AS cantidad,
+	   'JGO' AS um,
+	   'SILICON RTV 26BR ROJO 3 OZ.' AS denominacion,
+	   '0.50' AS precioNeto,
+	   '4.99' AS valorNeto
+UNION ALL
+SELECT '000020' AS posicion,
+	   '50644' AS material,
+	   '17' AS cantidad,
+	   'UN' AS um,
+	   'SILICON "ABRO" 1000 TRANSPARENTE' AS denominacion,
+	   '12.52' AS precioNeto,
+	   '125.15' AS valorNeto;]]>
+	</queryString>
+	<field name="posicion" class="java.lang.Object"/>
+	<field name="material" class="java.lang.Object"/>
+	<field name="cantidad" class="java.lang.Object"/>
+	<field name="um" class="java.lang.Object"/>
+	<field name="denominacion" class="java.lang.Object"/>
+	<field name="precioNeto" class="java.lang.Object"/>
+	<field name="valorNeto" class="java.lang.Object"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="129" splitType="Immediate">
+			<textField>
+				<reportElement uuid="a205ad94-478e-475f-9c51-c10f1488b286" style="style" x="52" y="1" width="107" height="10"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{titulo}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="23909cdf-690b-4d8c-aa16-26670182cfd6" style="style" x="48" y="13" width="116" height="9"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PRODUCTOS METALURGICOS S.A.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="bf7deebc-cb56-429e-9cfb-71ec08d77417" style="style" x="1" y="26" width="68" height="9"/>
+				<textElement>
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nro. Seguimiento:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="bf7deebc-cb56-429e-9cfb-71ec08d77417" style="style" x="134" y="26" width="24" height="9"/>
+				<textElement>
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="bf7deebc-cb56-429e-9cfb-71ec08d77417" style="style" x="1" y="35" width="45" height="9"/>
+				<textElement>
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Cliente:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="bf7deebc-cb56-429e-9cfb-71ec08d77417" style="style" x="1" y="44" width="45" height="9"/>
+				<textElement>
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Ciudad:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="bf7deebc-cb56-429e-9cfb-71ec08d77417" style="style" x="1" y="53" width="45" height="9"/>
+				<textElement>
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Vendedor:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="bf7deebc-cb56-429e-9cfb-71ec08d77417" style="style" x="1" y="62" width="45" height="9"/>
+				<textElement>
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fec. Fact. :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="bf7deebc-cb56-429e-9cfb-71ec08d77417" style="style" x="109" y="62" width="48" height="9"/>
+				<textElement>
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fac. SAP:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="bf7deebc-cb56-429e-9cfb-71ec08d77417" style="style" x="109" y="71" width="48" height="9"/>
+				<textElement>
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nro.Sello:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="bf7deebc-cb56-429e-9cfb-71ec08d77417" style="style" x="1" y="71" width="45" height="9"/>
+				<textElement>
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fac. SRI:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="bf7deebc-cb56-429e-9cfb-71ec08d77417" style="style" x="1" y="80" width="45" height="9"/>
+				<textElement>
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FUD:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="bf7deebc-cb56-429e-9cfb-71ec08d77417" style="style" x="109" y="80" width="48" height="9"/>
+				<textElement textAlignment="Right">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Guía Transp:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="bf7deebc-cb56-429e-9cfb-71ec08d77417" style="style" x="1" y="89" width="45" height="9"/>
+				<textElement>
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nro. Bulto:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="bf7deebc-cb56-429e-9cfb-71ec08d77417" style="style" x="1" y="98" width="45" height="9"/>
+				<textElement>
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Contacto:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="bf7deebc-cb56-429e-9cfb-71ec08d77417" style="style" x="109" y="89" width="48" height="9"/>
+				<textElement>
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Tipo:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="bf7deebc-cb56-429e-9cfb-71ec08d77417" style="style" x="1" y="107" width="45" height="9"/>
+				<textElement>
+					<font size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Motivo:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="bf7deebc-cb56-429e-9cfb-71ec08d77417" style="style" x="0" y="120" width="25" height="9"/>
+				<textElement verticalAlignment="Middle">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[POSICION]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="bf7deebc-cb56-429e-9cfb-71ec08d77417" style="style" x="25" y="120" width="18" height="9"/>
+				<textElement verticalAlignment="Middle">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[MATER]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="bf7deebc-cb56-429e-9cfb-71ec08d77417" style="style" x="59" y="120" width="14" height="9"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[U.M.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="bf7deebc-cb56-429e-9cfb-71ec08d77417" style="style" x="44" y="120" width="15" height="9"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CANT]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="bf7deebc-cb56-429e-9cfb-71ec08d77417" style="style" x="73" y="120" width="80" height="9"/>
+				<textElement verticalAlignment="Middle">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DENOMINACION]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="bf7deebc-cb56-429e-9cfb-71ec08d77417" style="style" x="153" y="120" width="23" height="9"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[P.NETO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="bf7deebc-cb56-429e-9cfb-71ec08d77417" style="style" x="176" y="120" width="23" height="9"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[V.NETO]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="e1041390-3808-4cfa-8f66-51003fae6dcd" style="style" x="71" y="26" width="63" height="9"/>
+				<textElement>
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{nroSeguimiento}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="c2005094-cd54-40ae-ac62-a86f0aae1297" style="style" x="159" y="26" width="43" height="9"/>
+				<textElement>
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{fecha}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="ff491c39-841e-4123-8f73-3cdfde230740" style="style" x="46" y="35" width="156" height="9"/>
+				<textElement>
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{cliente}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="f9c21a67-8753-49dc-94fc-1884c33eb25c" style="style" x="46" y="44" width="156" height="9"/>
+				<textElement>
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ciudad}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="6a093a73-e6c5-4cac-b102-e126a800bb3d" style="style" x="46" y="53" width="156" height="9"/>
+				<textElement>
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{vendedor}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="072fa0dd-becb-418a-9ab6-0a5d8b5ba541" style="style" x="46" y="62" width="62" height="9"/>
+				<textElement>
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{fecFactura}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="470d835e-4bcf-48f2-9cb6-b3a3da5c90e5" style="style" x="158" y="62" width="44" height="9"/>
+				<textElement>
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{facSap}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="9bf68c27-0c6c-4dc2-977c-c50161e311ff" style="style" x="46" y="71" width="62" height="9"/>
+				<textElement>
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{facSri}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="9144610f-d116-4779-8685-d812f54466fd" style="style" x="46" y="80" width="62" height="9"/>
+				<textElement>
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{fud}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="199c878e-49b0-4dbc-95c1-34d73143c1b7" style="style" x="46" y="89" width="62" height="9"/>
+				<textElement>
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{nroBulto}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="6ddc2c91-b188-429e-9535-7acb618391fe" style="style" x="158" y="71" width="44" height="9"/>
+				<textElement>
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{nroSello}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="56fccbd1-2f67-423e-b659-47930b5e82b2" style="style" x="158" y="80" width="44" height="9"/>
+				<textElement>
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{guiaTransporte}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="35c08da4-255d-49ee-a94a-5b1510a1b96d" style="style" x="158" y="89" width="44" height="9"/>
+				<textElement>
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{tipo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="193661b2-928b-4449-ac5a-3af8c0375a81" style="style" x="46" y="98" width="156" height="9"/>
+				<textElement>
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{contacto}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="93910779-4ec0-47c2-8a2c-ef3304c3bfa0" style="style" x="46" y="107" width="156" height="9"/>
+				<textElement>
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{motivo}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band/>
+	</pageHeader>
+	<detail>
+		<band height="10" splitType="Immediate">
+			<textField>
+				<reportElement uuid="2cac4962-c8d7-4c8f-91ce-11174bbd7730" style="style" x="1" y="0" width="25" height="9"/>
+				<textElement verticalAlignment="Top">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{posicion}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="541b332f-b8b5-45e5-83b7-7e17d6685d7c" style="style" x="26" y="0" width="17" height="9"/>
+				<textElement verticalAlignment="Top">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{material}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="1efa743e-2371-46fc-bf10-0cdc2ec5f78c" style="style" x="44" y="0" width="15" height="9"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cantidad}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="4f23affe-d813-43c8-a4d3-450cc882a083" style="style" x="59" y="0" width="14" height="9"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{um}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="951aea4e-6a82-42d0-8980-79c7c0adb53e" style="style" x="74" y="0" width="79" height="9"/>
+				<textElement verticalAlignment="Top">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{denominacion}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="9d5e428d-4130-4dbc-b6cf-aecee75bc4ef" style="style" x="153" y="0" width="23" height="9"/>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{precioNeto}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="b291b162-67c1-49e5-b0cd-f28f72e7010a" style="style" x="176" y="0" width="23" height="9"/>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valorNeto}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="5"/>
+	</summary>
+</jasperReport>

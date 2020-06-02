@@ -1,0 +1,21 @@
+# ---- PARÁMETROS CONEXIÓN PRODUCCIÓN ----
+#sap.mandante = 400
+#sap.usuario  = JPVEND
+#sap.password = promesa
+#sap.idioma   = ES
+#sap.host     = 10.10.10.111
+#sap.sistema  = 00
+#sap.ambiente  = PD
+
+
+# ---- PARÁMETROS CONEXIÓN DESARROLLO ----
+sap.mandante = 110
+sap.usuario  = cconcha
+sap.password = csti0212
+sap.idioma   = ES
+sap.host     = 10.10.10.113
+sap.sistema  = 02
+sap.ambiente  = DV
+
+sap.port = 3200
+sap.maxdelay = 20000

@@ -1,0 +1,392 @@
+package com.promesa.internalFrame;
+
+import java.beans.PropertyVetoException;
+import java.util.List;
+
+import javax.swing.JDesktopPane;
+import javax.swing.JInternalFrame;
+import javax.swing.JOptionPane;
+
+
+import com.promesa.bean.BeanDato;
+import com.promesa.internalFrame.cobranzas.IListaAnticipos;
+import com.promesa.internalFrame.cobranzas.IListaRegistroPagos;
+import com.promesa.internalFrame.cobranzas.IListadoFacturas;
+import com.promesa.internalFrame.devoluciones.ISolicitudDevoluciones;
+import com.promesa.internalFrame.ferias.IFerias;
+import com.promesa.internalFrame.pedidos.IBusquedaClientes;
+import com.promesa.internalFrame.pedidos.IListaOrdenes;
+import com.promesa.internalFrame.pedidos.IListarPrecios;
+import com.promesa.internalFrame.pedidos.IPanelControl;
+import com.promesa.internalFrame.planificacion.IVisita;
+import com.promesa.internalFrame.sincronizacion.ISincronizacionPedidos;
+import com.promesa.internalFrame.sisinfo.ICambioPrecio;
+import com.promesa.internalFrame.sisinfo.IIndicadoresVendedor;
+import com.promesa.main.Promesa;
+import com.promesa.sincronizacion.bean.BeanTareaProgramada;
+import com.promesa.util.Constante;
+import com.promesa.util.DLocker;
+import com.promesa.util.Util;
+
+public class Vendedor {
+	
+
+	static IPanelControl PanelControl;
+	static IBusquedaClientes ListaClientes;
+	static IListaOrdenes ListaOrdenes;
+	static IListarPrecios ListaPrecios;
+	static ISincronizacionPedidos Sincronizacion;
+	static IListaAnticipos listaAnticipos;
+	static IListaRegistroPagos listaPagos;
+	static IIndicadoresVendedor indicadoresVendedor;
+	static IVisita Visita;
+	static ICambioPrecio cambioPrecio;
+	static ISolicitudDevoluciones Solicitudes;
+	static IListadoFacturas listaFacturas;
+	static IFerias feria;
+
+	static BeanTareaProgramada beanTareaProgramada;
+	List<BeanDato> datose = null;
+
+	@SuppressWarnings("static-access")
+	public void muestraVentanaVendedor(int proceso, final JDesktopPane destokp, final BeanTareaProgramada beanTareaProgramada) throws PropertyVetoException {
+		this.beanTareaProgramada = beanTareaProgramada;
+		this.datose = beanTareaProgramada.getDatose();
+		switch (proceso) {
+			case 1: {
+				if (Visita == null || Visita.isClosed()) {
+					final DLocker bloqueador = new DLocker();
+					Thread hilo = new Thread() {
+						boolean fallo = false;
+						public void run() {
+							try {
+								Visita = new IVisita();			
+								destokp.add(Visita);
+							} catch (Exception e) {
+								fallo = true;
+								Visita = null;
+								Util.mostrarExcepcion(e);
+							} finally {
+								bloqueador.dispose();
+								if (fallo) {
+									JOptionPane.showMessageDialog(Promesa.getInstance(), Constante.ERROR_TRANSACCION, "Error", JOptionPane.ERROR_MESSAGE);
+								}
+							}
+						}
+					};
+					hilo.start();
+					bloqueador.setVisible(true);
+				} else {
+					try {
+						Visita.setMaximum(true);
+					} catch (Exception e) {
+						Visita = null;
+						Util.mostrarExcepcion(e);
+					}
+				}
+				try {
+					restaurarVentana(Visita);
+				} catch (Exception e) {
+					Util.mostrarExcepcion(e);
+				}
+				break;
+			}
+			case 2: {
+				final DLocker bloqueador = new DLocker();
+				Thread hilo = new Thread() {
+					@SuppressWarnings("unused")
+					boolean fallo = false;
+					public void run() {						
+						if (PanelControl == null || PanelControl.isClosed()) {
+							PanelControl = new IPanelControl(beanTareaProgramada, destokp);
+							destokp.add(PanelControl);
+						} else {
+							try {
+								PanelControl.setMaximum(true);
+							} catch (Exception e) {
+								Util.mostrarExcepcion(e);
+								PanelControl = null;
+							}
+						}
+						try {
+							restaurarVentana(PanelControl);
+						} catch (Exception e) {
+							Util.mostrarExcepcion(e);
+						} finally {
+							bloqueador.dispose();
+						}
+					}
+				};
+				hilo.start();
+				bloqueador.setVisible(true);
+				break;
+			}
+			case 3: {
+				if (ListaOrdenes == null || ListaOrdenes.isClosed()) {
+					ListaOrdenes = new IListaOrdenes(beanTareaProgramada);
+					destokp.add(ListaOrdenes);
+				} else {
+					try {
+						ListaOrdenes.setMaximum(true);
+					} catch (Exception e) {
+						Util.mostrarExcepcion(e);
+						ListaOrdenes = null;
+					}
+				}
+				try {
+					restaurarVentana(ListaOrdenes);
+				} catch (Exception e) {
+					Util.mostrarExcepcion(e);
+				}
+				break;
+			}
+			case 4: {
+				if (ListaClientes == null || ListaClientes.isClosed()) {
+					ListaClientes = new IBusquedaClientes(beanTareaProgramada);
+					destokp.add(ListaClientes);
+				} else {
+					try {
+						ListaClientes.setMaximum(true);
+					} catch (Exception e) {
+						Util.mostrarExcepcion(e);
+						ListaClientes = null;
+					}
+				}
+				try {
+					restaurarVentana(ListaClientes);
+				} catch (Exception e) {
+					Util.mostrarExcepcion(e);
+				}
+				break;
+			}
+			case 5: {
+				final DLocker bloqueador = new DLocker();
+				Thread hilo = new Thread() {
+					@SuppressWarnings("unused")
+					boolean fallo = false;
+					public void run() {
+						if (ListaPrecios == null || ListaPrecios.isClosed()) {
+							ListaPrecios = new IListarPrecios(beanTareaProgramada);
+							destokp.add(ListaPrecios);
+						} else {
+							try {
+								ListaPrecios.setMaximum(true);
+							} catch (Exception e) {
+								Util.mostrarExcepcion(e);
+								ListaPrecios = null;
+							}
+						}
+						try {
+							restaurarVentana(ListaPrecios);
+						} catch (Exception e) {
+							Util.mostrarExcepcion(e);
+						} finally {
+							bloqueador.dispose();
+						}
+					}
+				};
+				hilo.start();
+				bloqueador.setVisible(true);
+				break;
+			}
+			case 7: {
+				final DLocker bloqueador = new DLocker();
+				Thread hilo = new Thread() {
+					public void run() {
+						if (Sincronizacion == null || Sincronizacion.isClosed()) {
+							Sincronizacion = new ISincronizacionPedidos(beanTareaProgramada);
+							destokp.add(Sincronizacion);
+						} else {
+							try {
+								Sincronizacion.setMaximum(true);
+							} catch (Exception e) {
+								Util.mostrarExcepcion(e);
+								Sincronizacion = null;
+							}
+						}
+						try {
+							restaurarVentana(Sincronizacion);
+						} catch (Exception e) {
+							Util.mostrarExcepcion(e);
+						} finally {
+							bloqueador.dispose();
+						}
+					}
+				};
+				hilo.start();
+				bloqueador.setVisible(true);
+				break;
+			}
+			case 8: {
+				final DLocker bloqueador = new DLocker();
+				Thread hilo = new Thread() {
+					public void run() {
+						if (Solicitudes == null || Solicitudes.isClosed()) {
+							Solicitudes = new ISolicitudDevoluciones(beanTareaProgramada, destokp);
+							destokp.add(Solicitudes);
+						} else {
+							try {
+								Solicitudes.setMaximum(true);
+							} catch (Exception e) {
+								Util.mostrarExcepcion(e);
+								Solicitudes = null;
+							}
+						}
+						try {
+							restaurarVentana(Solicitudes);
+						} catch (Exception e) {
+							Util.mostrarExcepcion(e);
+						} finally {
+							bloqueador.dispose();
+						}
+					}
+				};
+				hilo.start();
+				bloqueador.setVisible(true);
+				break;
+			}
+			case 10: {
+				if (listaAnticipos == null || listaAnticipos.isClosed()) {
+					listaAnticipos = new IListaAnticipos();
+					destokp.add(listaAnticipos);
+				} else {
+					try {
+						listaAnticipos.setMaximum(true);
+					} catch (Exception e) {
+						Util.mostrarExcepcion(e);
+						listaAnticipos = null;
+					}
+				}
+				try {
+					restaurarVentana(listaAnticipos);
+				} catch (Exception e) {
+					Util.mostrarExcepcion(e);
+				}
+				break;
+			}
+			case 9: {
+				if (listaPagos == null || listaPagos.isClosed()) {
+					listaPagos = new IListaRegistroPagos();
+					destokp.add(listaPagos);
+				} else {
+					try {
+						listaPagos.setMaximum(true);
+					} catch (Exception e) {
+						Util.mostrarExcepcion(e);
+						listaPagos = null;
+					}
+				}
+				try {
+					restaurarVentana(listaPagos);
+				} catch (Exception e) {
+					Util.mostrarExcepcion(e);
+				}
+				break;
+			}
+			case 11: {
+				if (indicadoresVendedor == null || indicadoresVendedor.isClosed()) {
+					indicadoresVendedor = new IIndicadoresVendedor();
+					destokp.add(indicadoresVendedor);
+				} else {
+					try {
+						indicadoresVendedor.setMaximum(true);
+					} catch (Exception e) {
+						Util.mostrarExcepcion(e);
+						indicadoresVendedor = null;
+					}
+				}
+				try {
+					restaurarVentana(indicadoresVendedor);
+				} catch (Exception e) {
+					Util.mostrarExcepcion(e);
+				}
+				break;
+			}
+			case 13: {
+				if (cambioPrecio == null || cambioPrecio.isClosed()) {
+					cambioPrecio = new ICambioPrecio();
+					destokp.add(cambioPrecio);
+				} else {
+					try {
+						cambioPrecio.setMaximum(true);
+					} catch (Exception e) {
+						Util.mostrarExcepcion(e);
+						cambioPrecio = null;
+					}
+				}
+				try {
+					restaurarVentana(cambioPrecio);
+				} catch (Exception e) {
+					Util.mostrarExcepcion(e);
+				}
+				break;
+			}case 14: {
+				final DLocker bloqueador = new DLocker();
+				Thread hilo = new Thread() {
+					public void run() {
+						if (listaFacturas  == null || listaFacturas .isClosed()) {
+							listaFacturas  = new IListadoFacturas ();
+							destokp.add(listaFacturas );
+						} else {
+							try {
+								listaFacturas .setMaximum(true);
+							} catch (Exception e) {
+								Util.mostrarExcepcion(e);
+								listaFacturas  = null;
+							}
+						}
+						try {
+							restaurarVentana(listaFacturas);
+						} catch (Exception e) {
+							Util.mostrarExcepcion(e);
+						} finally {
+							bloqueador.dispose();
+						}
+					}
+				};
+				hilo.start();
+				bloqueador.setVisible(true);
+				break;
+			}case 15: {
+				final DLocker bloqueador = new DLocker();
+				Thread hilo = new Thread() {
+					public void run() {
+						if (feria  == null || feria .isClosed()) {
+							feria  = new IFerias ();
+							destokp.add(feria);
+						} else {
+							try {
+								feria .setMaximum(true);
+							} catch (Exception e) {
+								Util.mostrarExcepcion(e);
+								feria  = null;
+							}
+						}
+						try {
+							restaurarVentana(feria);
+						} catch (Exception e) {
+							Util.mostrarExcepcion(e);
+						} finally {
+							bloqueador.dispose();
+						}
+					}
+				};
+				hilo.start();
+				bloqueador.setVisible(true);
+				break;
+			}
+		}
+	}
+
+	private void restaurarVentana(JInternalFrame internalFrame) {
+		try {
+			if (internalFrame != null) {
+				internalFrame.setVisible(true);
+				internalFrame.setMaximum(true);
+			}
+		} catch (Exception e) {
+			Util.mostrarExcepcion(e);
+		}
+	}
+
+}

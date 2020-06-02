@@ -1,0 +1,7 @@
+# ---- PARÁMETROS PROMESA ----
+promesa.nombre = PRODUCTOS METALURGICOS S.A.
+promesa.telefono = 6001000
+promesa.direccion = VIA A DAULE KM 5.5
+promesa.iva = 0.12
+promesa.sociedad = 1000
+promesa.canal = 20

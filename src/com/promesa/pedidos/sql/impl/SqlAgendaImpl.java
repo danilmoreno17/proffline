@@ -1,0 +1,389 @@
+package com.promesa.pedidos.sql.impl;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import com.promesa.dao.ResultExecute;
+import com.promesa.dao.ResultExecuteList;
+import com.promesa.dao.ResultExecuteQuery;
+//import com.promesa.main.Promesa;
+import com.promesa.pedidos.bean.BeanAgenda;
+import com.promesa.pedidos.sql.SqlAgenda;
+import com.promesa.util.Constante;
+import com.promesa.util.Util;
+
+public class SqlAgendaImpl implements SqlAgenda {
+
+	private String sqlAgenda = null;
+	@SuppressWarnings({ "rawtypes" })
+	private HashMap column = new HashMap();
+	private List<BeanAgenda> listaAgenda = null;
+	@SuppressWarnings("rawtypes")
+	private HashMap<Integer, HashMap> mapResultado = new HashMap<Integer, HashMap>();
+	@SuppressWarnings("unused")
+	private BeanAgenda agenda = null;
+	private boolean resultado = false;
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public void setListaAgenda(BeanAgenda ag) {
+		listaAgenda = new ArrayList<BeanAgenda>();
+		ResultExecuteQuery resultExecuteQuery = null;
+		BeanAgenda agenda = null;
+		column = new HashMap();
+		column.put("String:0", ID_VENDOR);
+		column.put("String:1", STR_VENDOR);
+		column.put("String:2", STR_BEGDA);
+		column.put("String:3", STR_ENDDA);
+		column.put("String:4", STR_HORA);
+		column.put("String:5", STR_CUST);
+		column.put("String:6", STR_CUST_NAME);
+		column.put("String:7", STR_CUST_ADDRES);
+		column.put("String:8", STR_CUST_TELF);
+		column.put("String:9", STR_CUST_TELFX);
+		column.put("String:10", STR_CUST_1);
+		column.put("String:11", STR_CU_1);
+		column.put("String:12", STR_CU_2);
+		column.put("String:13", STR_CUST_KLIMK);
+		column.put("String:14", STR_CUS);
+		column.put("String:15", STR_CUST_AVAILABLE);
+		column.put("String:16", STR_DESCRIPTION);
+		column.put("String:17", STR_ST);
+		column.put("String:18", STR_STAT);
+		column.put("String:19", STR_TY);
+		column.put("String:20", STR_CUST_2);
+		column.put("String:21", STR_TYPE);
+		column.put("String:22", ESTADO);
+		sqlAgenda = " SELECT " + ID_VENDOR + "," + STR_VENDOR + "," + STR_BEGDA
+				+ "," + STR_ENDDA + "," + STR_HORA + "," + STR_CUST + ","
+				+ STR_CUST_NAME + "," + STR_CUST_ADDRES + "," + STR_CUST_TELF
+				+ "," + STR_CUST_TELFX + "," + STR_CUST_1 + "," + STR_CU_1
+				+ "," + STR_CU_2 + "," + STR_CUST_KLIMK + "," + STR_CUS + ","
+				+ STR_CUST_AVAILABLE + "," + STR_DESCRIPTION + "," + STR_ST
+				+ "," + STR_STAT + "," + STR_TY + "," + STR_CUST_2 + ","
+				+ STR_TYPE + "," + ESTADO + " FROM " + TABLA_AGENDA;
+		if (ag.getVENDOR_ID() != null && !ag.getVENDOR_ID().equals("")) {
+			if(ag.getBEGDA() != null && !ag.getBEGDA().equals(""))
+				sqlAgenda = sqlAgenda + " WHERE txtVendor_Id='" + ag.getVENDOR_ID() + "'" + " AND txtBegda='" + ag.getBEGDA() + "'";
+			else
+				sqlAgenda = sqlAgenda + " WHERE txtVendor_Id='" + ag.getVENDOR_ID() + "'";
+		}
+		if(ag.getCUST_ID() != null && !ag.getCUST_ID().equals("")){
+			sqlAgenda = sqlAgenda + " AND txtCust_Id='" + ag.getCUST_ID() + "'";
+		}
+		try {
+			resultExecuteQuery = new ResultExecuteQuery(sqlAgenda, column, Constante.BD_TX);//TODO Cambie de constante para trabajar directamente con la base de datos transaccional (antes era Constante.BD_SYNC, ahora es Constante.BD_TX)
+			mapResultado = resultExecuteQuery.getMap();
+			HashMap res = null;
+			for (int i = 0; i < mapResultado.size(); i++) {
+				res = (HashMap) mapResultado.get(i);
+				agenda = new BeanAgenda();
+				agenda.setVENDOR_ID(res.get(ID_VENDOR).toString());
+				agenda.setVENDOR_NAME(res.get(STR_VENDOR).toString());
+				agenda.setBEGDA(res.get(STR_BEGDA).toString());
+				agenda.setENDDA(res.get(STR_ENDDA).toString());
+				agenda.setTIME(res.get(STR_HORA).toString());
+				agenda.setCUST_ID(res.get(STR_CUST).toString());
+				agenda.setCUST_NAME(res.get(STR_CUST_NAME).toString());
+				agenda.setCUST_ADDRES(res.get(STR_CUST_ADDRES).toString());
+				agenda.setCUST_TELF1(res.get(STR_CUST_TELF).toString());
+				agenda.setCUST_TELFX(res.get(STR_CUST_TELFX).toString());
+				agenda.setCUST_1(res.get(STR_CUST_1).toString());
+				agenda.setCU_1(res.get(STR_CU_1).toString());
+				agenda.setCU_2(res.get(STR_CU_2).toString());
+				agenda.setCUST_KLIMK(res.get(STR_CUST_KLIMK).toString());
+				agenda.setCUS(res.get(STR_CUS).toString());
+				agenda.setCUST_AVAILABLE(res.get(STR_CUST_AVAILABLE).toString());
+				agenda.setDESCRIPTION(res.get(STR_DESCRIPTION).toString());
+				agenda.setST(res.get(STR_ST).toString());
+				agenda.setSTAT(res.get(STR_STAT).toString());
+				agenda.setTY(res.get(STR_TY).toString());
+				agenda.setCUST_2(res.get(STR_CUST_2).toString());
+				agenda.setTYPE_DESCRIPTION(res.get(STR_TYPE).toString());
+				agenda.setESTADO(res.get(ESTADO).toString());
+				agenda.setStrClaseRiesgo(agenda.getCUS());
+				agenda.setStrCodigoCliente(agenda.getCUST_ID());
+				agenda.setStrDireccionCliente(agenda.getCUST_ADDRES());
+				agenda.setStrDisponible(agenda.getCUST_AVAILABLE());
+				agenda.setStrHora(agenda.getTIME());
+				agenda.setStrIdAgenda(null);
+				agenda.setStrLimiteCredito(agenda.getCUST_KLIMK());
+				agenda.setStrNombreCliente(agenda.getCUST_NAME());
+				agenda.setStrTelefonoCliente(agenda.getCUST_TELF1());
+				agenda.setStrTipo(agenda.getTY());
+				agenda.setStrCondicionPago(res.get(STR_CUST_2).toString());
+				listaAgenda.add(agenda);
+			}
+		} catch (Exception e) {
+			Util.mostrarExcepcion(e);
+		}
+	}
+	
+	public void getAgendaByQuery(String query){
+		try {
+			listaAgenda = new ArrayList<BeanAgenda>();
+			ResultExecuteQuery resultExecuteQuery = null;
+			BeanAgenda agenda = null;
+			column = new HashMap();
+			column.put("String:0", ID_VENDOR);
+			column.put("String:1", STR_VENDOR);
+			column.put("String:2", STR_BEGDA);
+			column.put("String:3", STR_ENDDA);
+			column.put("String:4", STR_HORA);
+			column.put("String:5", STR_CUST);
+			column.put("String:6", STR_CUST_NAME);
+			column.put("String:7", STR_CUST_ADDRES);
+			column.put("String:8", STR_CUST_TELF);
+			column.put("String:9", STR_CUST_TELFX);
+			column.put("String:10", STR_CUST_1);
+			column.put("String:11", STR_CU_1);
+			column.put("String:12", STR_CU_2);
+			column.put("String:13", STR_CUST_KLIMK);
+			column.put("String:14", STR_CUS);
+			column.put("String:15", STR_CUST_AVAILABLE);
+			column.put("String:16", STR_DESCRIPTION);
+			column.put("String:17", STR_ST);
+			column.put("String:18", STR_STAT);
+			column.put("String:19", STR_TY);
+			column.put("String:20", STR_CUST_2);
+			column.put("String:21", STR_TYPE);
+			column.put("String:22", ESTADO);
+			
+			
+			resultExecuteQuery = new ResultExecuteQuery(query, column, Constante.BD_TX);//TODO Cambie de constante para trabajar directamente con la base de datos transaccional (antes era Constante.BD_SYNC, ahora es Constante.BD_TX)
+			mapResultado = resultExecuteQuery.getMap();
+			HashMap res = null;
+			for (int i = 0; i < mapResultado.size(); i++) {
+				res = (HashMap) mapResultado.get(i);
+				agenda = new BeanAgenda();
+				agenda.setVENDOR_ID(res.get(ID_VENDOR).toString());
+				agenda.setVENDOR_NAME(res.get(STR_VENDOR).toString());
+				agenda.setBEGDA(res.get(STR_BEGDA).toString());
+				agenda.setENDDA(res.get(STR_ENDDA).toString());
+				agenda.setTIME(res.get(STR_HORA).toString());
+				agenda.setCUST_ID(res.get(STR_CUST).toString());
+				agenda.setCUST_NAME(res.get(STR_CUST_NAME).toString());
+				agenda.setCUST_ADDRES(res.get(STR_CUST_ADDRES).toString());
+				agenda.setCUST_TELF1(res.get(STR_CUST_TELF).toString());
+				agenda.setCUST_TELFX(res.get(STR_CUST_TELFX).toString());
+				agenda.setCUST_1(res.get(STR_CUST_1).toString());
+				agenda.setCU_1(res.get(STR_CU_1).toString());
+				agenda.setCU_2(res.get(STR_CU_2).toString());
+				agenda.setCUST_KLIMK(res.get(STR_CUST_KLIMK).toString());
+				agenda.setCUS(res.get(STR_CUS).toString());
+				agenda.setCUST_AVAILABLE(res.get(STR_CUST_AVAILABLE).toString());
+				agenda.setDESCRIPTION(res.get(STR_DESCRIPTION).toString());
+				agenda.setST(res.get(STR_ST).toString());
+				agenda.setSTAT(res.get(STR_STAT).toString());
+				agenda.setTY(res.get(STR_TY).toString());
+				agenda.setCUST_2(res.get(STR_CUST_2).toString());
+				agenda.setTYPE_DESCRIPTION(res.get(STR_TYPE).toString());
+				agenda.setESTADO(res.get(ESTADO).toString());
+				agenda.setStrClaseRiesgo(agenda.getCUS());
+				agenda.setStrCodigoCliente(agenda.getCUST_ID());
+				agenda.setStrDireccionCliente(agenda.getCUST_ADDRES());
+				agenda.setStrDisponible(agenda.getCUST_AVAILABLE());
+				agenda.setStrHora(agenda.getTIME());
+				agenda.setStrIdAgenda(null);
+				agenda.setStrLimiteCredito(agenda.getCUST_KLIMK());
+				agenda.setStrNombreCliente(agenda.getCUST_NAME());
+				agenda.setStrTelefonoCliente(agenda.getCUST_TELF1());
+				agenda.setStrTipo(agenda.getTY());
+				agenda.setStrCondicionPago(res.get(STR_CUST_2).toString());
+				listaAgenda.add(agenda);
+			}
+		} catch (Exception e) {
+			Util.mostrarExcepcion(e);
+		}
+	}
+	
+	// Método que obtiene registros en estado "111"
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public void listaAgendaSAP(BeanAgenda ag) {
+		listaAgenda = new ArrayList<BeanAgenda>();
+		ResultExecuteQuery resultExecuteQuery = null;
+		BeanAgenda agenda = null;
+		column = new HashMap();
+		column.put("String:0", ID_VENDOR);
+		column.put("String:1", STR_BEGDA);
+		column.put("String:2", STR_HORA);
+		column.put("String:3", STR_CUST);
+		column.put("String:4", STR_TY);
+		sqlAgenda = " SELECT " + ID_VENDOR + "," + STR_BEGDA + "," + STR_HORA
+				+ "," + STR_CUST + "," + STR_TY + " FROM " + TABLA_AGENDA;
+		if (ag.getVENDOR_ID() != null) {
+			sqlAgenda = sqlAgenda + " WHERE " + ID_VENDOR + " = '" + ag.getVENDOR_ID() + "'" + " AND " + ESTADO + " = '111'";
+		}
+		try {
+			resultExecuteQuery = new ResultExecuteQuery(sqlAgenda, column, Constante.BD_TX);//TODO Cambie de constante para trabajar directamente con la base de datos transaccional (antes era Constante.BD_SYNC, ahora es Constante.BD_TX)
+			mapResultado = resultExecuteQuery.getMap();
+			HashMap res = null;
+			for (int i = 0; i < mapResultado.size(); i++) {
+				res = (HashMap) mapResultado.get(i);
+				agenda = new BeanAgenda();
+				agenda.setVENDOR_ID(res.get(ID_VENDOR).toString());
+				agenda.setBEGDA(res.get(STR_BEGDA).toString());
+				agenda.setTIME(res.get(STR_HORA).toString());
+				agenda.setCUST_ID(res.get(STR_CUST).toString());
+				agenda.setTY(res.get(STR_TY).toString());
+				listaAgenda.add(agenda);
+			}
+		} catch (Exception e) {
+			Util.mostrarExcepcion(e);
+		}
+	}
+	// -------------------------------------------------------------------------------------------- //
+	
+	// ------------ OBTIENE EL PARAMETRO DE MAXIMO DE VISITAS ------------------------ //
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public int obtenerMaxVisitas() {
+		int max=0;
+		column = new HashMap();
+		column.put("String:0", "VALOR_1");
+		ResultExecuteQuery resultExecuteQuery = null;
+		String sqlMaxVisitas = "SELECT * FROM PROFFLINE_TB_ZTCONSTANTE WHERE TXTNOMBRECAMPO = 'MAX_VISITA';";
+		resultExecuteQuery = new ResultExecuteQuery(sqlMaxVisitas, column, Constante.BD_SYNC);
+		if (sqlMaxVisitas != null) {
+			mapResultado = resultExecuteQuery.getMap();
+			if (mapResultado.size() > 0) {
+				HashMap res = (HashMap) mapResultado.get(0);
+				try{
+				max = Integer.parseInt(res.get("VALOR_1").toString());
+				}catch(Exception e){
+					max=0;
+				}
+			}
+		}
+		return max;
+	}
+	public void setInsertaAgenda(List<BeanAgenda> listaA) {
+		final List<String> listaSQL = new ArrayList<String>();
+		for (BeanAgenda a : listaA) {
+			listaSQL.add("INSERT INTO " + TABLA_AGENDA + " (" + ID_VENDOR + ","
+					+ STR_VENDOR + "," + STR_BEGDA + "," + STR_ENDDA + ","
+					+ STR_HORA + "," + STR_CUST + "," + STR_CUST_NAME + ","
+					+ STR_CUST_ADDRES + "," + STR_CUST_TELF + ","
+					+ STR_CUST_TELFX + "," + STR_CUST_1 + "," + STR_CU_1 + ","
+					+ STR_CU_2 + "," + STR_CUST_KLIMK + "," + STR_CUS + ","
+					+ STR_CUST_AVAILABLE + "," + STR_DESCRIPTION + "," + STR_ST
+					+ "," + STR_STAT + "," + STR_TY + "," + STR_CUST_2 + ","
+					+ STR_TYPE + "," + ESTADO + ")" + " VALUES ('"
+					+ a.getVENDOR_ID() + "','" + a.getVENDOR_NAME() + "','"
+					+ a.getBEGDA() + "','" + a.getENDDA() + "','" + a.getTIME()
+					+ "','" + a.getCUST_ID() + "','" + a.getCUST_NAME().replace("'", "''") + "','"
+					+ a.getCUST_ADDRES() + "','" + a.getCUST_TELF1() + "','"
+					+ a.getCUST_TELFX() + "','" + a.getCUST_1() + "','"
+					+ a.getCU_1() + "','" + a.getCU_2() + "','"
+					+ a.getCUST_KLIMK() + "','" + a.getCUS() + "','"
+					+ a.getCUST_AVAILABLE() + "','" + a.getDESCRIPTION()
+					+ "','" + a.getST() + "','" + a.getSTAT() + "','"
+					+ a.getTY() + "','" + a.getCUST_2() + "','"
+					+ a.getTYPE_DESCRIPTION() + "','" + a.getESTADO() + "')");
+		}
+		ResultExecuteList resultExecute = new ResultExecuteList();
+		resultExecute.insertarListaConsultas(listaSQL, "Agenda", Constante.BD_TX);//TODO Cambie de constante para trabajar directamente con la base de datos transaccional (antes era Constante.BD_SYNC, ahora es Constante.BD_TX)
+		resultado = resultExecute.isFlag();
+	}
+
+	public void setEliminarAgenda(BeanAgenda ag) {
+		sqlAgenda = " DELETE FROM " + TABLA_AGENDA;
+		if (ag.getVENDOR_ID() != null) {
+			sqlAgenda = sqlAgenda + " WHERE txtVendor_Id='" + ag.getVENDOR_ID() + "'";
+		}
+		ResultExecute resultExecute = new ResultExecute(sqlAgenda, "Agenda", Constante.BD_TX);//TODO Cambie de constante para trabajar directamente con la base de datos transaccional (antes era Constante.BD_SYNC, ahora es Constante.BD_TX)
+		resultado = resultExecute.isFlag();
+	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public int getCountRow() {
+		ResultExecuteQuery resultExecuteQuery = null;
+		column = new HashMap();
+		column.put("String:0", "filas");
+		int f = 0;
+		sqlAgenda = " SELECT COUNT(*) AS filas FROM " + TABLA_AGENDA;
+		try {
+			resultExecuteQuery = new ResultExecuteQuery(sqlAgenda, column, Constante.BD_TX);//TODO Cambie de constante para trabajar directamente con la base de datos transaccional (antes era Constante.BD_SYNC, ahora es Constante.BD_TX)
+			mapResultado = resultExecuteQuery.getMap();
+			HashMap res = null;
+			res = (HashMap) mapResultado.get(0);
+			f = Integer.parseInt(res.get("filas").toString().trim());
+		} catch (Exception e) {
+			Util.mostrarExcepcion(e);
+		}
+		return f;
+	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public String[] valoresAgenda(String codigoCliente) {
+		ResultExecuteQuery resultExecuteQuery = null;
+		column = new HashMap();
+		column.put("String:0", "txtCust_KLimk");
+		column.put("String:1", "txtCus");
+		column.put("String:2", "txtCust_Available");
+		sqlAgenda = "SELECT txtCust_KLimk, txtCus, txtCust_Available from "
+				+ "PROFFLINE_TB_AGENDA where txtCust_id='" + codigoCliente + "' LIMIT 1";
+		try {
+			resultExecuteQuery = new ResultExecuteQuery(sqlAgenda, column, Constante.BD_TX);//TODO Cambie de constante para trabajar directamente con la base de datos transaccional (antes era Constante.BD_SYNC, ahora es Constante.BD_TX)
+			mapResultado = resultExecuteQuery.getMap();
+			HashMap res = null;
+			if (mapResultado.size() > 0) {
+				res = (HashMap) mapResultado.get(0);
+				String limiteCredito = ("" + res.get("txtCust_KLimk")).toString().trim();
+				String claseRiesgo = ("" + res.get("txtCus")).toString().trim();
+				String disponible = ("" + res.get("txtCust_Available")).toString().trim();
+				String[] resultado = new String[3];
+				resultado[0] = limiteCredito;
+				resultado[1] = claseRiesgo;
+				resultado[2] = disponible;
+				return resultado;
+			} else {
+				return null;
+			}
+		} catch (Exception e) {
+			Util.mostrarExcepcion(e);
+		}
+		return null;
+	}
+
+	public boolean isInsertarAgenda() {
+		return resultado;
+	}
+
+	public boolean isEliminarAgenda() {
+		return resultado;
+	}
+
+	public List<BeanAgenda> getListaAgenda() {
+		return listaAgenda;
+	}
+
+	public static void main(String args[]) {
+		SqlAgendaImpl sql = new SqlAgendaImpl();
+		sql.setListaAgenda(new BeanAgenda());
+	}
+
+	private static String TABLA_AGENDA = "PROFFLINE_TB_AGENDA";
+	private static String ID_VENDOR = "txtVendor_Id";
+	private static String STR_VENDOR = "txtVendor_Name";
+	private static String STR_BEGDA = "txtBegda";
+	private static String STR_ENDDA = "txtEndda";
+	private static String STR_HORA = "txtHora";
+	private static String STR_CUST = "txtCust_Id";
+	private static String STR_CUST_NAME = "txtCust_Name";
+	private static String STR_CUST_ADDRES = "txtCust_Addres";
+	private static String STR_CUST_TELF = "txtCust_Telf";
+	private static String STR_CUST_TELFX = "txtCust_Telfx";
+	private static String STR_CUST_1 = "txtCust_1";
+	private static String STR_CU_1 = "txtCu_1";
+	private static String STR_CU_2 = "txtCu_2";
+	private static String STR_CUST_KLIMK = "txtCust_Klimk";
+	private static String STR_CUS = "txtCus";
+	private static String STR_CUST_AVAILABLE = "txtCust_Available";
+	private static String STR_DESCRIPTION = "txtDescription";
+	private static String STR_ST = "txtSt";
+	private static String STR_STAT = "txtStat";
+	private static String STR_TY = "txtTy";
+	private static String STR_CUST_2 = "txtCust_2";
+	private static String STR_TYPE = "txtType_Description";
+	private static String ESTADO = "txtStdRegAge";
+
+}

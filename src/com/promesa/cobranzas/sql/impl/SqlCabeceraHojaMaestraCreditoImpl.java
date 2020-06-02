@@ -1,0 +1,88 @@
+package com.promesa.cobranzas.sql.impl;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import com.promesa.cobranzas.bean.CabeceraHojaMaestraCredito;
+import com.promesa.dao.ResultExecute;
+import com.promesa.dao.ResultExecuteList;
+import com.promesa.dao.ResultExecuteQuery;
+import com.promesa.util.Constante;
+
+public class SqlCabeceraHojaMaestraCreditoImpl {
+	
+	@SuppressWarnings("rawtypes")
+	private HashMap column = new HashMap();
+	@SuppressWarnings("rawtypes")
+	private HashMap<Integer, HashMap> mapResultado = new HashMap<Integer, HashMap>();
+	private ResultExecuteList resultExecuteList = null;
+	private ResultExecute resultExecute = null;
+	
+	public void insertarListaCabeceraHojaMaestraCredito(List<CabeceraHojaMaestraCredito> lstCabeceraHojaMaestraCredito) throws Exception {
+		List<String> listaCabeceraHojaMaestraCredito = new ArrayList<String>();
+		for(CabeceraHojaMaestraCredito cabeceraHojaMaestraCredito : lstCabeceraHojaMaestraCredito){
+			String sql = "INSERT INTO PROFFLINE_TB_CABECERA_HOJA_MAESTRA_CREDITO (codigoCliente, codigoVendedor, nombreCompletoCliente,"
+				+ "limiteCredito, claseRiesgo, cupoDisponible, valorVencido, fuds, notaCredito, protestante, bloqueoCredito) VALUES ('"
+				+ cabeceraHojaMaestraCredito.getCodigoCliente()
+				+ "','" + cabeceraHojaMaestraCredito.getCodigoVendedor()
+				+ "','" + cabeceraHojaMaestraCredito.getNombreCompletoCliente().replace("'", "")
+				+ "','" + cabeceraHojaMaestraCredito.getLimiteCredito()
+				+ "','" + cabeceraHojaMaestraCredito.getClaseRiesgo()
+				+ "','" + cabeceraHojaMaestraCredito.getCupoDisponible()
+				+ "','" + cabeceraHojaMaestraCredito.getValorVencido()
+				+ "','" + cabeceraHojaMaestraCredito.getFuds()
+				+ "','" + cabeceraHojaMaestraCredito.getNotaCredito()
+				+ "','" + cabeceraHojaMaestraCredito.getProtestante()
+				+ "','" + cabeceraHojaMaestraCredito.getBloqueoCredito() + "');";
+			listaCabeceraHojaMaestraCredito.add(sql);
+		}
+		resultExecuteList = new ResultExecuteList();
+		resultExecuteList.insertarListaConsultas(listaCabeceraHojaMaestraCredito, "HOJA MAESTRA CREDITO", Constante.BD_SYNC);
+	}
+	
+	public boolean eliminarCabeceraHojaMaestraCredito() {
+		String sql = "DELETE FROM PROFFLINE_TB_CABECERA_HOJA_MAESTRA_CREDITO;";
+		resultExecute = new ResultExecute(sql, "HOJA MAESTRA CREDITO", Constante.BD_SYNC);
+		return resultExecute.isFlag();
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public CabeceraHojaMaestraCredito obtenerCabeceraHojaMaestraCredito(String codigoCliente, String codigoVendedor) {
+		CabeceraHojaMaestraCredito cabeceraHojaMaestraCredito = new CabeceraHojaMaestraCredito();
+		column = new HashMap();
+		column.put("String:0", "codigoCliente");
+		column.put("String:1", "codigoVendedor");
+		column.put("String:2", "nombreCompletoCliente");
+		column.put("String:3", "limiteCredito");
+		column.put("String:4", "claseRiesgo");
+		column.put("String:5", "cupoDisponible");
+		column.put("String:6", "valorVencido");
+		column.put("String:7", "fuds");
+		column.put("String:8", "notaCredito");
+		column.put("String:9", "protestante");
+		column.put("String:10", "bloqueoCredito");
+		ResultExecuteQuery resultExecuteQuery = null;
+		String sql = "SELECT * FROM PROFFLINE_TB_CABECERA_HOJA_MAESTRA_CREDITO "
+				+ "WHERE codigoCliente like '%" + codigoCliente + "' " + "AND codigoVendedor = '" + codigoVendedor + "';";
+		resultExecuteQuery = new ResultExecuteQuery(sql, column, Constante.BD_SYNC);
+		if(resultExecuteQuery != null){
+			mapResultado = resultExecuteQuery.getMap();
+			if(mapResultado.size() > 0){
+				HashMap res = (HashMap) mapResultado.get(0);
+				cabeceraHojaMaestraCredito.setCodigoCliente(res.get("codigoCliente").toString());
+				cabeceraHojaMaestraCredito.setCodigoVendedor(res.get("codigoVendedor").toString());
+				cabeceraHojaMaestraCredito.setNombreCompletoCliente(res.get("nombreCompletoCliente").toString());
+				cabeceraHojaMaestraCredito.setLimiteCredito(res.get("limiteCredito").toString());
+				cabeceraHojaMaestraCredito.setClaseRiesgo(res.get("claseRiesgo").toString());
+				cabeceraHojaMaestraCredito.setCupoDisponible(res.get("cupoDisponible").toString());
+				cabeceraHojaMaestraCredito.setValorVencido(res.get("valorVencido").toString());
+				cabeceraHojaMaestraCredito.setFuds(res.get("fuds").toString());
+				cabeceraHojaMaestraCredito.setNotaCredito(res.get("notaCredito").toString());
+				cabeceraHojaMaestraCredito.setProtestante(res.get("protestante").toString());
+				cabeceraHojaMaestraCredito.setBloqueoCredito(res.get("bloqueoCredito").toString());
+			}
+		}
+		return cabeceraHojaMaestraCredito;
+	}
+}

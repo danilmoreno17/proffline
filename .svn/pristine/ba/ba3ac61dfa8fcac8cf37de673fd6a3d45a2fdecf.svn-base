@@ -1,0 +1,11 @@
+# ---- PARÁMETROS FTP PROFFLINE ----
+#ftp.server = 10.10.14.7
+#ftp.user = 9C6EBB541FEF774A7A773B0FF803D08F
+#ftp.password = C7E72EF86D69855539D97CD1F5E5D84C
+#ftp.directorio = /REPOSITORIO_PROFFLINE_DES/proffline
+#local.directorio = c:\\dbproffline
+ftp.server = 10.10.10.19
+ftp.user = 11416F026FACC46871D687DA38F78B60D36E8CD185EEFA314364BA7195F9AF34
+ftp.password = C7E72EF86D69855539D97CD1F5E5D84C
+ftp.directorio = /REPOSITORIO_PROFFLINE_DES/proffline
+local.directorio = c:\\dbproffline

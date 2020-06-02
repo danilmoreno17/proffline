@@ -1,0 +1,99 @@
+package com.promesa.impresiones.dpp350;
+
+import java.io.File;
+//import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import javax.print.PrintService;
+import javax.print.PrintServiceLookup;
+import javax.print.attribute.HashPrintRequestAttributeSet;
+import javax.print.attribute.PrintRequestAttributeSet;
+import javax.print.attribute.standard.Copies;
+import javax.print.attribute.standard.MediaPrintableArea;
+import javax.print.attribute.standard.MediaSize;
+import javax.print.attribute.standard.MediaSizeName;
+
+import com.promesa.util.Constante;
+import com.promesa.util.Mensaje;
+
+import net.sf.jasperreports.engine.JRDataSource;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JRExporterParameter;
+//import net.sf.jasperreports.engine.JasperExportManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.data.JRBeanArrayDataSource;
+import net.sf.jasperreports.engine.export.JRPrintServiceExporter;
+import net.sf.jasperreports.engine.export.JRPrintServiceExporterParameter;
+//import com.promesa.util.Util;
+
+public abstract class IReportManagerDpp350 {
+
+	public abstract String getPathResource();
+    @SuppressWarnings("rawtypes")
+	public abstract List getListRegistros();
+    @SuppressWarnings("rawtypes")
+	public abstract Map getParametros();
+    
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public void imprimir(){
+        
+     PrintService[] printService = PrintServiceLookup.lookupPrintServices(null, null);
+       if( printService.length>0 ){
+    	   PrintService impresora = null;
+    	   
+//    	   impresora = (PrintService) JOptionPane.showInputDialog(null, "Eliga impresora:",
+//                   "Imprimir Reporte", JOptionPane.QUESTION_MESSAGE, null, printService, printService[0]);
+    	   
+			for (int i = 0; i < printService.length; i++) {
+				if (printService[i].getName().toString().equals(Constante.NOMNRE_IMPRESORA)) {
+					impresora = printService[i];
+				}
+			}
+			if(impresora == null){
+				Mensaje.mostrarAviso("Impresora no Disponible.");
+				return ;
+			}
+           if( impresora != null ){
+               try{
+                    String pathResource = this.getPathResource();
+                    List listRegistros = this.getListRegistros();
+                    Map parametros = this.getParametros();
+                    Object[] registros = (listRegistros == null)? new Object[1]: listRegistros.toArray();
+                    JasperPrint jp;
+                    JRDataSource dataSource = new JRBeanArrayDataSource(registros);
+                    jp = JasperFillManager.fillReport(getClass().getClassLoader().
+                        getResourceAsStream(pathResource), parametros, dataSource);
+
+                    JRPrintServiceExporter jrprintServiceExporter = new JRPrintServiceExporter();
+                    jrprintServiceExporter.setParameter(JRExporterParameter.JASPER_PRINT, jp );
+                    
+                    
+                    
+//                    JasperExportManager.exportReportToPdfFile(jp, "D:\\CobranzaRetencion_"+Util.convierteFechaHoyAFormatoDeImpresionDDMMYYYYHHMMSS(new Date())+".pdf");
+
+                    PrintRequestAttributeSet printRequestAttributeSet = new HashPrintRequestAttributeSet();
+
+                    float ancho = new Float(3.1);
+//                    float alto = 70;
+                    float alto = 1000;
+                    MediaSizeName mediaSizeName = MediaSize.findMedia(alto,ancho,MediaPrintableArea.INCH);
+
+                    printRequestAttributeSet.add(mediaSizeName);
+                    printRequestAttributeSet.add(new Copies(1));
+
+                    jrprintServiceExporter.setParameter(JRPrintServiceExporterParameter.PRINT_SERVICE, impresora );
+                    jrprintServiceExporter.setParameter(JRPrintServiceExporterParameter.DISPLAY_PRINT_DIALOG, Boolean.FALSE);
+                    jrprintServiceExporter.setParameter(JRPrintServiceExporterParameter.PRINT_REQUEST_ATTRIBUTE_SET, printRequestAttributeSet);
+                    jrprintServiceExporter.exportReport();
+                    
+               }catch(JRException ex){
+                   System.err.println("Error JRException: " + ex.getMessage());
+               }
+            }
+        }else {
+        	Mensaje.mostrarAviso("No tiene impresora conectada.");
+        }
+    }	
+}

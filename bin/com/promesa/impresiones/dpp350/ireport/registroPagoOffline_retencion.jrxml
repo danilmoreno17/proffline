@@ -1,0 +1,349 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="registroPago2" language="groovy" pageWidth="223" pageHeight="842" columnWidth="221" leftMargin="0" rightMargin="2" topMargin="0" bottomMargin="2" isIgnorePagination="true" uuid="c14ecd73-4906-430e-8b20-57ca7665c259">
+	<property name="ireport.zoom" value="2.4793388429752063"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="5"/>
+	<style name="style" fontName="DFKai-SB" fontSize="6" isBold="true"/>
+	<subDataset name="dataset1" uuid="c5ad7ef8-a211-4928-b892-c8393274cd9c">
+		<queryString>
+			<![CDATA[SELECT '300.00' AS importe,
+'23434343' AS referencia,
+'009-099-123456789' AS numeroFactura,
+'13-12-2013' AS fechaVencimiento,
+'13-12-2013' AS fechaDocumento,
+'Efectivo' AS 'formaPago.descripcionFormaPago',
+'01232342342343' AS 'bancoCliente.nroCtaBcoCliente',
+'mi banco mi banco' AS 'bancoPromesa.descripcionBancoPromesa',
+'mi banco 2 mi banco 2' As 'bancoCliente.descripcionBancoCliente'
+UNION ALL
+SELECT '300.00' AS importe,
+'23434343' AS referencia,
+'009-099-123456789' AS numeroFactura,
+'13-12-2013' AS fechaVencimiento,
+'13-12-2013' AS fechaDocumento,
+'Efectivo' AS 'formaPago.descripcionFormaPago',
+'01232342342343' AS 'bancoCliente.nroCtaBcoCliente',
+'mi banco mi banco' AS 'bancoPromesa.descripcionBancoPromesa',
+'mi banco 2 mi banco 2' As 'bancoCliente.descripcionBancoCliente'
+UNION ALL
+SELECT '300.00' AS importe,
+'23434343' AS referencia,
+'009-099-2342342342344' AS numeroFactura,
+'13-12-2013' AS fechaVencimiento,
+'13-12-2013' AS fechaDocumento,
+'Efectivo' AS 'formaPago.descripcionFormaPago',
+'01232342342343' AS 'bancoCliente.nroCtaBcoCliente',
+'mi banco mi banco' AS 'bancoPromesa.descripcionBancoPromesa',
+'mi banco 2 mi banco 2' As 'bancoCliente.descripcionBancoCliente'
+;]]>
+		</queryString>
+		<field name="importe" class="java.lang.Object"/>
+		<field name="referencia" class="java.lang.Object"/>
+		<field name="numeroFactura" class="java.lang.Object"/>
+		<field name="fechaVencimiento" class="java.lang.Object"/>
+		<field name="fechaDocumento" class="java.lang.Object"/>
+		<field name="formaPago.descripcionFormaPago" class="java.lang.Object"/>
+		<field name="bancoCliente.nroCtaBcoCliente" class="java.lang.Object"/>
+		<field name="bancoPromesa.descripcionBancoPromesa" class="java.lang.Object"/>
+		<field name="bancoCliente.descripcionBancoCliente" class="java.lang.Object"/>
+	</subDataset>
+	<parameter name="titulo" class="java.lang.String"/>
+	<parameter name="direccion" class="java.lang.String"/>
+	<parameter name="telefono" class="java.lang.String"/>
+	<parameter name="nroRegistro" class="java.lang.String"/>
+	<parameter name="cliente" class="java.lang.String"/>
+	<parameter name="vendedor" class="java.lang.String"/>
+	<parameter name="total" class="java.lang.String"/>
+	<parameter name="lista" class="java.util.List"/>
+	<parameter name="fecha" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT '123-123-1231231232' AS referencia,
+	'12-12-1212' AS vencimiento,
+	'1012.23' AS importePagoTotal,
+	'1212.23' AS importePago
+;]]>
+	</queryString>
+	<field name="referencia" class="java.lang.Object"/>
+	<field name="vencimiento" class="java.lang.Object"/>
+	<field name="importePagoTotal" class="java.lang.Object"/>
+	<field name="importePago" class="java.lang.Object"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="78" splitType="Stretch">
+			<textField>
+				<reportElement style="style" x="60" y="1" width="109" height="10" uuid="a205ad94-478e-475f-9c51-c10f1488b286"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{titulo}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="style" x="60" y="12" width="107" height="9" uuid="23909cdf-690b-4d8c-aa16-26670182cfd6"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PRODUCTOS METALURGICOS S.A.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="style" x="1" y="49" width="50" height="9" uuid="bf7deebc-cb56-429e-9cfb-71ec08d77417"/>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Cliente:]]></text>
+			</staticText>
+			<textField>
+				<reportElement style="style" x="53" y="49" width="150" height="9" uuid="85a7275c-3a94-47d9-928f-761c98dbc5e6"/>
+				<textElement>
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{cliente}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="style" x="53" y="58" width="150" height="9" uuid="dd08e878-75ef-4b0a-be32-64b4a9e40811"/>
+				<textElement>
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{vendedor}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="style" x="1" y="58" width="50" height="9" uuid="bf7deebc-cb56-429e-9cfb-71ec08d77417"/>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Vendedor:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="style" x="1" y="40" width="50" height="9" uuid="577b4840-0cac-442d-aa89-b6a7acd0755a"/>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nro.Registro:]]></text>
+			</staticText>
+			<textField>
+				<reportElement style="style" x="53" y="40" width="150" height="9" uuid="6be5bb15-b1b9-4e4b-aff3-4cc6e99f55ac"/>
+				<textFieldExpression><![CDATA[$P{nroRegistro}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="style" x="36" y="23" width="84" height="9" uuid="1b32799a-71a6-4aa7-ae13-c6f0d3afcbaf"/>
+				<textElement>
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{direccion}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="style" x="163" y="23" width="38" height="9" uuid="4ffa63b0-8197-4531-83de-8c9234ff3033"/>
+				<textElement>
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{telefono}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="style" x="1" y="23" width="35" height="9" uuid="577b4840-0cac-442d-aa89-b6a7acd0755a"/>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Dirección:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="style" x="130" y="23" width="31" height="9" uuid="bf7deebc-cb56-429e-9cfb-71ec08d77417"/>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Teléfono:]]></text>
+			</staticText>
+			<textField>
+				<reportElement style="style" x="53" y="67" width="100" height="9" uuid="b459745f-621d-4cb6-a8c0-794bb44b842e"/>
+				<textFieldExpression><![CDATA[$P{fecha}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="style" x="1" y="67" width="50" height="9" uuid="bf7deebc-cb56-429e-9cfb-71ec08d77417"/>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha:]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="61" splitType="Stretch">
+			<componentElement>
+				<reportElement x="1" y="2" width="214" height="57" uuid="8b8aa8be-b46c-4a08-ac64-9bc444a96281"/>
+				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
+					<datasetRun subDataset="dataset1" uuid="958c16fa-dc3b-4089-8aa7-188457de0173">
+						<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanArrayDataSource($P{lista}.toArray())]]></dataSourceExpression>
+					</datasetRun>
+					<jr:listContents height="57" width="214">
+						<staticText>
+							<reportElement style="style" x="0" y="2" width="44" height="9" uuid="d503198d-5a06-48f9-ad88-01c783ad4ad5"/>
+							<text><![CDATA[FORMA PAGO:]]></text>
+						</staticText>
+						<staticText>
+							<reportElement style="style" x="118" y="20" width="29" height="9" uuid="d503198d-5a06-48f9-ad88-01c783ad4ad5"/>
+							<text><![CDATA[IMPORTE:]]></text>
+						</staticText>
+						<staticText>
+							<reportElement style="style" x="0" y="47" width="44" height="9" uuid="d503198d-5a06-48f9-ad88-01c783ad4ad5"/>
+							<text><![CDATA[REFERENCIA:]]></text>
+						</staticText>
+						<staticText>
+							<reportElement style="style" x="0" y="11" width="44" height="9" uuid="d503198d-5a06-48f9-ad88-01c783ad4ad5"/>
+							<text><![CDATA[BCO.CLIENTE:]]></text>
+						</staticText>
+						<staticText>
+							<reportElement style="style" x="95" y="2" width="44" height="9" uuid="d503198d-5a06-48f9-ad88-01c783ad4ad5"/>
+							<text><![CDATA[NRO.FACTURA:]]></text>
+						</staticText>
+						<staticText>
+							<reportElement style="style" x="0" y="38" width="44" height="9" uuid="d503198d-5a06-48f9-ad88-01c783ad4ad5"/>
+							<text><![CDATA[FEC.DOC.:]]></text>
+						</staticText>
+						<staticText>
+							<reportElement style="style" x="0" y="20" width="47" height="9" uuid="d503198d-5a06-48f9-ad88-01c783ad4ad5"/>
+							<text><![CDATA[NRO.CTA.BCO.:]]></text>
+						</staticText>
+						<staticText>
+							<reportElement style="style" x="106" y="38" width="41" height="9" uuid="d503198d-5a06-48f9-ad88-01c783ad4ad5"/>
+							<text><![CDATA[FEC.VENC.:]]></text>
+						</staticText>
+						<staticText>
+							<reportElement style="style" x="0" y="29" width="44" height="9" uuid="d503198d-5a06-48f9-ad88-01c783ad4ad5"/>
+							<text><![CDATA[BCO.PROMESA:]]></text>
+						</staticText>
+						<textField>
+							<reportElement style="style" x="140" y="2" width="68" height="9" uuid="d651e11b-795a-4a79-b5e1-5b43533194b2"/>
+							<textFieldExpression><![CDATA[$F{numeroFactura}]]></textFieldExpression>
+						</textField>
+						<textField>
+							<reportElement style="style" x="148" y="20" width="60" height="9" uuid="465653d7-3eec-4605-a546-f5573c84280a"/>
+							<textFieldExpression><![CDATA[$F{importe}]]></textFieldExpression>
+						</textField>
+						<textField>
+							<reportElement style="style" x="48" y="47" width="160" height="9" uuid="eb3044f9-38bf-4eea-93d2-746a7e47ef28"/>
+							<textFieldExpression><![CDATA[$F{referencia}]]></textFieldExpression>
+						</textField>
+						<textField>
+							<reportElement style="style" x="48" y="38" width="54" height="9" uuid="52d9badd-29ab-4850-a400-39c157cb0ab9"/>
+							<textFieldExpression><![CDATA[$F{fechaDocumento}]]></textFieldExpression>
+						</textField>
+						<textField>
+							<reportElement style="style" x="148" y="38" width="60" height="9" uuid="810e3862-ccf2-4948-8820-381f014c483d"/>
+							<textFieldExpression><![CDATA[$F{fechaVencimiento}]]></textFieldExpression>
+						</textField>
+						<textField>
+							<reportElement style="style" x="48" y="20" width="63" height="9" uuid="440e6839-473c-4396-9b4b-d84c81133bec"/>
+							<textFieldExpression><![CDATA[$F{bancoCliente.nroCtaBcoCliente}]]></textFieldExpression>
+						</textField>
+						<textField>
+							<reportElement style="style" x="48" y="11" width="160" height="9" uuid="8dc3a1d1-52d8-44da-ac51-335d2a172585"/>
+							<textFieldExpression><![CDATA[$F{bancoCliente.descripcionBancoCliente}]]></textFieldExpression>
+						</textField>
+						<textField>
+							<reportElement style="style" x="48" y="29" width="160" height="9" uuid="cbfac768-9255-4e45-982e-07cb01ab084c"/>
+							<textFieldExpression><![CDATA[$F{bancoPromesa.descripcionBancoPromesa}]]></textFieldExpression>
+						</textField>
+						<textField>
+							<reportElement style="style" x="48" y="2" width="45" height="9" uuid="7ded9cbb-bda6-4418-9fd3-8bb82f2b23e8"/>
+							<textFieldExpression><![CDATA[""+$F{formaPago.descripcionFormaPago}]]></textFieldExpression>
+						</textField>
+						<line>
+							<reportElement x="1" y="1" width="208" height="1" uuid="db99967f-7b31-4929-8cab-5eea7a08aed5"/>
+							<graphicElement>
+								<pen lineWidth="1.0" lineStyle="Dotted"/>
+							</graphicElement>
+						</line>
+					</jr:listContents>
+				</jr:list>
+			</componentElement>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="17" splitType="Stretch">
+			<staticText>
+				<reportElement style="style" x="2" y="8" width="63" height="9" uuid="42a9897d-3602-4fbd-a444-9b4c61f180a9"/>
+				<text><![CDATA[Nro.Factura]]></text>
+			</staticText>
+			<line>
+				<reportElement x="2" y="0" width="208" height="1" uuid="db99967f-7b31-4929-8cab-5eea7a08aed5"/>
+				<graphicElement>
+					<pen lineWidth="1.0" lineStyle="Dotted"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement style="style" x="66" y="8" width="35" height="9" uuid="42a9897d-3602-4fbd-a444-9b4c61f180a9"/>
+				<text><![CDATA[Fec.Venc.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="style" x="105" y="8" width="30" height="9" uuid="42a9897d-3602-4fbd-a444-9b4c61f180a9"/>
+				<textElement textAlignment="Right"/>
+				<text><![CDATA[Valor]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="style" x="140" y="8" width="35" height="9" uuid="42a9897d-3602-4fbd-a444-9b4c61f180a9"/>
+				<textElement textAlignment="Right"/>
+				<text><![CDATA[Abono]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="9" splitType="Stretch">
+			<textField>
+				<reportElement style="style" x="2" y="0" width="63" height="9" uuid="9bbb24ec-faa0-47a7-80bc-cd4be0d029a5"/>
+				<textFieldExpression><![CDATA[""+$F{referencia}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="style" x="140" y="0" width="35" height="9" uuid="46e963f4-5eb8-4714-b1e0-7386e07c2e91"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[""+$F{importePago}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="style" x="66" y="0" width="35" height="9" uuid="a0d6a9be-03da-44d9-9963-ea308d0422b2"/>
+				<textFieldExpression><![CDATA[""+$F{vencimiento}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="style" x="105" y="0" width="30" height="9" uuid="a1ae4fbc-b327-4ff8-b4ea-f5de3da21584"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[""+$F{importePagoTotal}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="39" splitType="Stretch">
+			<textField>
+				<reportElement style="style" x="153" y="29" width="34" height="9" uuid="7ad344f6-edb1-4d1b-9596-766e90793b0b"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$P{total}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="style" x="78" y="29" width="69" height="9" uuid="8bddb17e-17c4-482d-bb5d-239997d1b8d1"/>
+				<textElement textAlignment="Right"/>
+				<text><![CDATA[Total Retención  :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="style" x="78" y="20" width="69" height="9" uuid="7dd49591-0a86-4c1d-b2f0-75e1b669e1ae"/>
+				<textElement textAlignment="Right"/>
+				<text><![CDATA[Retención IVA    :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="style" x="78" y="11" width="69" height="9" uuid="2ff66f06-2b3c-4039-89d1-21143846b18c"/>
+				<textElement textAlignment="Right"/>
+				<text><![CDATA[Retención Importe:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="153" y="20" width="34" height="9" uuid="a32edb1c-44c6-453c-b435-d308841f15ed"/>
+				<textElement>
+					<font fontName="DFKai-SB" size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{iva}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="153" y="11" width="48" height="9" uuid="7f442b5d-e8a5-457a-ae66-8f28c8a60457"/>
+				<textElement>
+					<font fontName="DFKai-SB" size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{importe}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

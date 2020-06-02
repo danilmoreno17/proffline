@@ -1,0 +1,136 @@
+package com.promesa.impresiones.dpp350;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import com.promesa.impresiones.cobranzas.DetalleTicketPago;
+import com.promesa.util.Util;
+
+public class TicketPagoDPP350 extends IReportManagerDpp350{
+
+	public void setDireccion(String direccion) {
+		this.direccion = direccion;
+	}
+	public void setTelefono(String telefono) {
+		this.telefono = telefono;
+	}
+	public void setNumeroTicket(String strTicket) {
+		this.numeroTicket = strTicket.split("-");
+	}
+	public void setCliente(String cliente) {
+		this.cliente = cliente;
+	}
+	public void setVendedor(String vendedor) {
+		this.vendedor = vendedor;
+	}
+	public void setReferencia(String referencia) {
+		this.referencia = referencia;
+	}
+	public void setCuentaBanco(String cuentaBanco) {
+		this.cuentaBanco = cuentaBanco;
+	}
+	public void setFormaPago(String formaPago) {
+		this.formaPago = formaPago;
+	}
+	public void setFechaDocumento(String fechaDocumento) {
+		this.fechaDocumento = fechaDocumento;
+	}
+	public void setFechaVencimiento(String fechaVencimiento) {
+		this.fechaVencimiento = fechaVencimiento;
+	}
+	public void setListaDetalleTicketPago(List<DetalleTicketPago> listaDetalleTicketPago) {
+		this.listaDetalleTicketPago = listaDetalleTicketPago;
+		double total = 0d;
+		for (DetalleTicketPago detalleTicketPago : listaDetalleTicketPago) {
+			total = total + detalleTicketPago.getValor();
+		}
+		this.setTotalCobranza(total);
+	}
+	
+	public void agregarDetalleALaLista(DetalleTicketPago detalleTicketPago){
+		listaDetalleTicketPago.add(detalleTicketPago);
+	}
+	
+	public void setStrTitulo(String strTitulo) {
+		this.strTitulo = strTitulo;
+	}
+	@Override
+	public String getPathResource() {
+		if(strIva.equals("0")){
+			return "com/promesa/impresiones/dpp350/ireport/registro_pago.jasper";
+		} else {
+			return "com/promesa/impresiones/dpp350/ireport/registro_pago_retencion.jasper";
+		}
+		
+	}
+	@SuppressWarnings("rawtypes")
+	@Override
+	public List getListRegistros() {
+		return listaDetalleTicketPago;
+	}
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@Override
+	public Map getParametros() {
+		Map param = new HashMap();
+		Double abonoTotal = 0d;
+		double iva = 0d;
+		for (DetalleTicketPago pagoParcial : listaDetalleTicketPago) {
+			abonoTotal += pagoParcial.getAbono();
+			iva += Double.parseDouble(pagoParcial.getIva());
+		}
+		
+		double importe = abonoTotal - iva;
+		param.put("titulo", this.strTitulo);
+		param.put("total", Util.formatearNumero(abonoTotal));
+		param.put("nroTicket", this.numeroTicket[0]);
+		param.put("nroSap", this.numeroTicket[1]);
+		param.put("fecDocumento", this.fechaDocumento);
+		param.put("direccion", Util.obtenerDireccionPromesa());
+		param.put("telefono", Util.obtenerTelefonoPromesa());
+		param.put("cliente", this.cliente);
+		param.put("vendedor", this.vendedor);
+		param.put("referencia", this.referencia);
+		param.put("ctaBanco", this.cuentaBanco);
+//		param.put("fecRegistro", Util.convierteFechaAFormatoDDMMMYYYY(new Date()));
+		param.put("fecRegistro", Util.convierteFechaHoyAFormatoDDMMMYYYYHHMM(new Date()));
+		param.put("fecVencimiento", this.fechaVencimiento);
+		param.put("formaPago", this.formaPago);
+		param.put("iva", Util.formatearNumero(iva));
+		param.put("importe",Util.formatearNumero(importe));
+		
+		return param;
+	}
+	public void setTotalCobranza(double totalCobranza) {
+		this.totalCobranza = totalCobranza;
+	}
+	public double getTotalCobranza() {
+		return totalCobranza;
+	}
+	
+	public String getStrIva() {
+		return strIva;
+	}
+	public void setStrIva(String strIva) {
+		this.strIva = strIva;
+	}
+
+	private String[] numeroTicket;
+	private String cliente;
+	private String vendedor;
+	private String referencia;
+	private String cuentaBanco;
+	private String formaPago;
+	private String fechaDocumento;
+	private String fechaVencimiento;
+	private String strTitulo;
+	private double totalCobranza;
+	@SuppressWarnings("unused")
+	private String direccion;
+	@SuppressWarnings("unused")
+	private String telefono;
+	private String strIva;
+	private List<DetalleTicketPago> listaDetalleTicketPago = new ArrayList<DetalleTicketPago>();
+}

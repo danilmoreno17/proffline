@@ -1,0 +1,81 @@
+package com.promesa.bean;
+
+import java.util.List;
+
+public class BeanDato {
+	private String strModo; // GUARDA MODO DE CONEXION 
+	private String strConexion; // GUARDA TIEMPO DE CONEXION
+	private String strUsuario; // GUARDA NOMBRE Y APELLIDOS DE USUARIO
+	private String strCodigo; // GUARDA CODIGO DE USUARIO
+	private String strNU; // GUARDA NOMBRE DE USUARIO
+	private String strPU; // GUARDA CLAVE DE USUARIO
+	@SuppressWarnings("rawtypes")
+	private List menu; // GUARDA OPCIONES DE MENU 
+	private String strRol; // GUARDA ROL
+	private boolean sincronizar;
+	private boolean sincronizarAnticopoCobranza;
+    
+	public boolean isSincronizarAnticopoCobranza() {
+		return sincronizarAnticopoCobranza;
+	}
+	public void setSincronizarAnticopoCobranza(boolean sincronizarAnticopoCobranza) {
+		this.sincronizarAnticopoCobranza = sincronizarAnticopoCobranza;
+	}
+	public boolean isSincronizar() {
+		return sincronizar;
+	}
+	public void setSincronizar(boolean sincronizar) {
+		this.sincronizar = sincronizar;
+	}
+	public String getStrModo() {
+		return strModo;
+	}	
+	public void setStrModo(String strModo) {
+		this.strModo = strModo;
+	}
+	
+	public String getStrConexion() {
+		return strConexion;
+	}	
+	public void setStrConexion(String strConexion) {
+		this.strConexion = strConexion;
+	}
+	public String getStrUsuario() {
+		return strUsuario;
+	}	
+	public void setStrUsuario(String strUsuario) {
+		this.strUsuario = strUsuario;
+	}
+	public String getStrCodigo() {
+		return strCodigo;
+	}	
+	public void setStrCodigo(String strCodigo) {
+		this.strCodigo = strCodigo;
+	}
+	public String getStrNU() {
+		return strNU;
+	}	
+	public void setStrNU(String strNU) {
+		this.strNU = strNU;
+	}
+	public String getStrPU() {
+		return strPU;
+	}	
+	public void setStrPU(String strPU) {
+		this.strPU = strPU;
+	}
+	@SuppressWarnings("rawtypes")
+	public List getMenu() {
+		return menu;
+	}	
+	@SuppressWarnings("rawtypes")
+	public void setMenu(List menu) {
+		this.menu = menu;
+	}
+	public String getStrRol() {
+		return strRol;
+	}
+	public void setStrRol(String strRol) {
+		this.strRol = strRol;
+	}
+}

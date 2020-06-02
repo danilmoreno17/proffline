@@ -1,0 +1,144 @@
+package com.promesa.internalFrame;
+
+import java.beans.PropertyVetoException;
+
+import javax.swing.JDesktopPane;
+import javax.swing.JInternalFrame;
+
+import com.promesa.internalFrame.planificacion.IPlanificacion;
+import com.promesa.internalFrame.planificacion.IReporteControl;
+import com.promesa.internalFrame.sincronizacion.ISincronizacionPlanificacion;
+import com.promesa.internalFrame.sisinfo.IIndicadoresSupervisor;
+import com.promesa.sincronizacion.bean.BeanTareaProgramada;
+import com.promesa.util.DLocker;
+import com.promesa.util.Mensaje;
+import com.promesa.util.Util;
+
+public class Supervisor {
+
+	IPlanificacion Planificacion;
+	IReporteControl ReporteControl;
+
+	ISincronizacionPlanificacion Sincronizacion;
+	static IIndicadoresSupervisor indicadoresSupervisor;
+	
+	public void muestraVentanaSupervisor(int proceso,
+			final JDesktopPane destokp,
+			final BeanTareaProgramada beanTareaProgramada)
+			throws PropertyVetoException {
+		switch (proceso) {
+			case 1: {
+				if (Planificacion == null || Planificacion.isClosed()) {
+					final DLocker bloqueador = new DLocker();
+					Thread hilo = new Thread() {
+						public void run() {
+							boolean cerrar = false;
+							try {
+								Planificacion = new IPlanificacion(beanTareaProgramada);
+								destokp.add(Planificacion);
+								Planificacion.setVisible(true);
+								Planificacion.setMaximum(true);
+							} catch (Exception e) {
+								cerrar = true;
+								Mensaje.mostrarError(e.getMessage());
+								Util.mostrarExcepcion(e);
+							} finally {
+								if (!cerrar) {
+									bloqueador.dispose();
+								}
+							}
+						}
+					};
+					hilo.start();
+					bloqueador.setVisible(true);
+				}
+				try {
+					restaurarVentana(Planificacion);
+					Planificacion.setSelected(true);
+				} catch (Exception e) {
+					Mensaje.mostrarError(e.getMessage());
+					Util.mostrarExcepcion(e);
+				}
+			}
+				break;
+			case 2: {
+				if (Sincronizacion == null || Sincronizacion.isClosed()) {
+					Sincronizacion = new ISincronizacionPlanificacion(beanTareaProgramada);
+					Sincronizacion.setVisible(true);
+					destokp.add(Sincronizacion);
+					Sincronizacion.setMaximum(true);
+					try {
+						Sincronizacion.setSelected(true);
+					} catch (PropertyVetoException e) {
+						Util.mostrarExcepcion(e);
+					}
+				}
+			}
+				break;
+			case 3: {
+				if (ReporteControl == null || ReporteControl.isClosed()) {
+					final DLocker bloqueador = new DLocker();
+					Thread hilo = new Thread() {
+						public void run() {
+							boolean cerrar = false;
+							try {
+								ReporteControl = new IReporteControl(beanTareaProgramada);
+								destokp.add(ReporteControl);
+								ReporteControl.setVisible(true);
+								ReporteControl.setMaximum(true);
+							} catch (Exception e) {
+								cerrar = true;
+								Mensaje.mostrarError(e.getMessage());
+								Util.mostrarExcepcion(e);
+							} finally {
+								if (!cerrar) {
+									bloqueador.dispose();
+								}
+							}
+						}
+					};
+					hilo.start();
+					bloqueador.setVisible(true);
+				}
+				try {
+					restaurarVentana(ReporteControl);
+					ReporteControl.setSelected(true);
+				} catch (Exception e) {
+					Mensaje.mostrarError(e.getMessage());
+					Util.mostrarExcepcion(e);
+				}
+			}
+				break;
+			case 4: {
+				if (indicadoresSupervisor == null || indicadoresSupervisor.isClosed()) {
+					indicadoresSupervisor = new IIndicadoresSupervisor();
+					destokp.add(indicadoresSupervisor);
+				} else {
+					try {
+						indicadoresSupervisor.setMaximum(true);
+					} catch (Exception e) {
+						Util.mostrarExcepcion(e);
+						indicadoresSupervisor = null;
+					}
+				}
+				try {
+					restaurarVentana(indicadoresSupervisor);
+				} catch (Exception e) {
+					Util.mostrarExcepcion(e);
+				}
+			}
+				break;
+		}
+	}
+	
+	private void restaurarVentana(JInternalFrame internalFrame) {
+		try {
+			if (internalFrame != null) {
+				internalFrame.setVisible(true);
+				internalFrame.setMaximum(true);
+			}
+		} catch (Exception e) {
+			Util.mostrarExcepcion(e);
+		}
+	}
+}
