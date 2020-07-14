@@ -603,6 +603,14 @@ public class SincronizacionPedidos {
 		return "E";
 	}
 
+	public static String sincronizarVentaCruzada(String strCodVendedor) {
+		com.promesa.pedidos.sql.impl.SqlSincronizacionImpl sqlPedido = new com.promesa.pedidos.sql.impl.SqlSincronizacionImpl();
+		if (sqlPedido.sincronizaMaterialVentaCruzada() && sqlPedido.sincronizaVentaCruzada()) {
+			return "S";
+		}
+		return "E";
+	}
+	
 	public static String sincronizarTablaMaterialStock() {
 		com.promesa.pedidos.sql.impl.SqlSincronizacionImpl sqlPedido = new com.promesa.pedidos.sql.impl.SqlSincronizacionImpl();
 		if (sqlPedido.sincronizaMaterialStock()) {

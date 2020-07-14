@@ -25,6 +25,8 @@ public class BeanCondicionComercial2 {
 	private String strNroRegCond;
 	private String strNum;		
 	
+	private String strMATNR;
+	
 	public int getIntPrioridadGrupo() {
 		return intPrioridadGrupo;
 	}
@@ -129,6 +131,12 @@ public class BeanCondicionComercial2 {
 	}
 	public void setStrNum(String strNum) {
 		this.strNum = strNum;
+	}
+	public String getStrMATNR() {
+		return strMATNR;
+	}
+	public void setStrMATNR(String strMATNR) {
+		this.strMATNR = strMATNR;
 	}	
 	
 }

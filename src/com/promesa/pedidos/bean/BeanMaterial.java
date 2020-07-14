@@ -49,6 +49,45 @@ public class BeanMaterial implements Comparable {
 	private boolean booleanToString = false;
 	private String strFec_Ing;
 	private String strMargen_Obj;
+	
+	private String strVentasAcumulado;
+	private String strVentasPromedio;
+	private String strCliente;
+	private String strVentaReal;
+	
+	
+	public String getStrVentaReal() {
+		return strVentaReal;
+	}
+
+	public void setStrVentaReal(String strVentaReal) {
+		this.strVentaReal = strVentaReal;
+	}
+
+	public String getStrVentasAcumulado() {
+		return strVentasAcumulado;
+	}
+
+	public void setStrVentasAcumulado(String strVentasAcumulado) {
+		this.strVentasAcumulado = strVentasAcumulado;
+	}
+
+	public String getStrVentasPromedio() {
+		return strVentasPromedio;
+	}
+
+	public void setStrVentasPromedio(String strVentasPromedio) {
+		this.strVentasPromedio = strVentasPromedio;
+	}
+
+	public String getStrCliente() {
+		return strCliente;
+	}
+
+	public void setStrCliente(String strCliente) {
+		this.strCliente = strCliente;
+	}
+	
 	public String getStrMargen_Obj() {
 		return strMargen_Obj;
 	}

@@ -214,7 +214,7 @@ public class SqlClienteImpl implements SqlCliente {
 					+ "," + APELLIDO_CLIENTE + "," + EMAIL_CLIENTE + "," + TELEFONO_CLIENTE + "," + TELEFONO_TRABAJO
 					+ "," + TELEFONO_MOVIL + "," + FAX_CLIENTE + "," + DIRECCION_CLIENTE + "," + CIUDAD_CLIENTE 
 					+ "," + ESTADO_PROVINCIA_CLIENTE + "," + CODIGO_POSTAL_CLIENTE + "," + MARCA_BLOQUEO_ALMACEN
-					+ ", txtCodOrgVentas, txtCodCanalDist, txtCodSector, txtOficinaVentas, txtGrupoVentas, txtIndicadorImpuesto, txtCodigoTipologia, txtDescripcionTipologia, txtClase)"
+					+ ", txtCodOrgVentas, txtCodCanalDist, txtCodSector, txtOficinaVentas, txtGrupoVentas, txtIndicadorImpuesto, txtCodigoTipologia, txtDescripcionTipologia, txtClase, txtDescripcionCanal)"
 					+ " VALUES ('" + cliente.getStrIdCliente().replaceAll("'", "''")
 					+ "','" + cliente.getStrCompaniaCliente().replaceAll("'", "''")
 					+ "','" + cliente.getStrNombreCliente().replaceAll("'", "''")
@@ -237,7 +237,8 @@ public class SqlClienteImpl implements SqlCliente {
 					+ "','" + cliente.getIndicadorIva().replaceAll("'", "''")
 					+ "','" + cliente.getStrCodigoTipologia().replaceAll("'", "''")
 					+ "','" + cliente.getStrDescripcionTipologia().replaceAll("'", "''")
-					+ "','" + cliente.getStrClase().replaceAll("'", "''")+ "')";
+					+ "','" + cliente.getStrClase().replaceAll("'", "''")
+					+ "','" + cliente.getStrCanal().replaceAll("'", "''") + "')";
 			listaCliente.add(sqlCliente);
 		}
 		ResultExecuteList resultExecute = new ResultExecuteList();
@@ -249,12 +250,12 @@ public class SqlClienteImpl implements SqlCliente {
 		String sqlEmpCli = "";
 		for (BeanCliente cliente : listaC) {
 			sqlCliente = "INSERT INTO " + TABLA_CLIENTE + " (" + ID_CLIENTE + "," + COMPANIA_CLIENTE + "," + NOMBRE_CLIENTE
-					+ "," + APELLIDO_CLIENTE + "," + EMAIL_CLIENTE + "," + TELEFONO_CLIENTE
-					+ "," + TELEFONO_TRABAJO + "," + TELEFONO_MOVIL + "," + FAX_CLIENTE + "," + DIRECCION_CLIENTE
-					+ "," + CIUDAD_CLIENTE + "," + ESTADO_PROVINCIA_CLIENTE + "," + CODIGO_POSTAL_CLIENTE + "," + MARCA_BLOQUEO_ALMACEN
+					+ "," + APELLIDO_CLIENTE + "," + EMAIL_CLIENTE + "," + TELEFONO_CLIENTE	+ "," + TELEFONO_TRABAJO
+					+ "," + TELEFONO_MOVIL + "," + FAX_CLIENTE + "," + DIRECCION_CLIENTE + "," + CIUDAD_CLIENTE
+					+ "," + ESTADO_PROVINCIA_CLIENTE + "," + CODIGO_POSTAL_CLIENTE + "," + MARCA_BLOQUEO_ALMACEN
 					+ "," + CODIGO_TIPOLOGIA + "," + DESCRIPCION_TIPOLOGIA + "," + TXTCODORGVENTAS + "," + TXTCODCANALDIST
 					+ "," + TXTCODSECTOR + "," + INDICADOR_IMPUESTO + "," + OFICINA_VENTAS + "," + GRUPO_VENTAS
-					+ ") " + " VALUES ('" + cliente.getStrIdCliente().replaceAll("'", "''")
+					+ ", txtDescripcionCanal) " + " VALUES ('" + cliente.getStrIdCliente().replaceAll("'", "''")
 					+ "','" + cliente.getStrCompaniaCliente().replaceAll("'", "''")
 					+ "','" + cliente.getStrNombreCliente().replaceAll("'", "''")
 					+ "','" + cliente.getStrApellidosCliente().replaceAll("'", "''")
@@ -275,7 +276,8 @@ public class SqlClienteImpl implements SqlCliente {
 					+ "','" + cliente.getStrCodSector().replaceAll("'", "''")
 					+ "','" + cliente.getIndicadorIva().replaceAll("'", "''")
 					+ "','" + cliente.getStrOficinaVentas().replaceAll("'", "''")
-					+ "','" + cliente.getStrGrupoVentas().replaceAll("'", "''") + "')";
+					+ "','" + cliente.getStrGrupoVentas().replaceAll("'", "''")
+					+ "','" + cliente.getStrCanal().replaceAll("'", "''") + "')";
 			listaCliente.add(sqlCliente);
 			sqlEmpCli = " insert into " + TABLA_EMPLEADO_CLIENTE + " values ('" + strCodVendedor + "','" + cliente.getStrIdCliente() + "')";
 			listaCliente.add(sqlEmpCli);
@@ -408,7 +410,8 @@ public class SqlClienteImpl implements SqlCliente {
 		column.put("String:1", "txtDireccionCliente");
 		column.put("String:2", "txtTelefonoTrabajoCliente");
 		column.put("String:3", "txtCiudadCliente");
-		sqlCliente = "select txtNombreCliente, txtDireccionCliente, txtTelefonoTrabajoCliente,txtCiudadCliente from proffline_tb_cliente where txtIdCliente='"
+		column.put("String:4", "txtDescripcionCanal");
+		sqlCliente = "select txtNombreCliente, txtDireccionCliente, txtTelefonoTrabajoCliente,txtCiudadCliente,txtDescripcionCanal from proffline_tb_cliente where txtIdCliente='"
 				+ idCliente + "'";
 		try {
 			resultExecuteQuery = new ResultExecuteQuery(sqlCliente, column, Constante.BD_SYNC);
@@ -424,6 +427,7 @@ public class SqlClienteImpl implements SqlCliente {
 				cliente.setStrDireccionCliente(direccion);
 				cliente.setStrTelefonoTrabajoCliente(telefono);
 				cliente.setStrCiudadCliente(ciudad);
+				cliente.setStrCanal("" + res.get("txtDescripcionCanal"));
 			}
 		} catch (Exception e) {
 			Util.mostrarExcepcion(e);

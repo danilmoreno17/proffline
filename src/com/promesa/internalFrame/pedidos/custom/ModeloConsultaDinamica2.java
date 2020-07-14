@@ -39,6 +39,8 @@ public class ModeloConsultaDinamica2 implements TableModel{
 		case 14:
 		case 15:
 		case 16:
+		case 18:
+		case 19:
 			return Double.class;
 		case 1:
 		case 2:
@@ -55,7 +57,7 @@ public class ModeloConsultaDinamica2 implements TableModel{
 
 	@Override
 	public int getColumnCount() {
-		return 18;
+		return 20;
 	}
 
 	@Override
@@ -98,6 +100,10 @@ public class ModeloConsultaDinamica2 implements TableModel{
 //			return "PMD/UNM";
 		case 17:
 			return "FECHA";
+		case 18:
+			return "VTA/USD";
+		case 19:
+			return "%CUMPL.";
 		default:
 			return "";
 		}
@@ -188,6 +194,10 @@ public class ModeloConsultaDinamica2 implements TableModel{
 //			return Util.formatearNumero(valorPromedio);
 		case 17:
 			return items.get(rowIndex).getFecha();
+		case 18:
+			return items.get(rowIndex).getDblValorReal();
+		case 19:
+			return items.get(rowIndex).getDblCumplimiento();
 		default:
 			return "";
 		}
@@ -299,6 +309,24 @@ public class ModeloConsultaDinamica2 implements TableModel{
 		case 17:
 			items.get(rowIndex).setFecha(aValue.toString());
 			break;	
+		case 18:
+			try {
+				valor = Double.parseDouble(aValue.toString());
+			} catch (Exception e) {
+				Util.mostrarExcepcion(e);
+				valor = 0d;
+			}
+			items.get(rowIndex).setDblValorReal(valor);
+			break;
+		case 19:
+			try {
+				valor = Double.parseDouble(aValue.toString());
+			} catch (Exception e) {
+				Util.mostrarExcepcion(e);
+				valor = 0d;
+			}
+			items.get(rowIndex).setDblCumplimiento(valor);
+			break;
 		}
 	}
 	
@@ -312,7 +340,7 @@ public class ModeloConsultaDinamica2 implements TableModel{
 	
 	public Object[] identificadorClumnas(){
 		Object idColumnas[] = new Object[]{"CODIGO", "DESCRIPCIÓN/LARGA", "UN", "MARCE", "TPO", " ", "LISTA","NETO",
-				"+IVA", " ", "PEDIDO", "% DSCT","CONFIRM.","STOCK","TOTAL", "VTA/USD"/*"TOT. ACM."*/, "VTA/UN.VTA"/*"PMD/UND"*/,"FECHA"};
+				"+IVA", " ", "PEDIDO", "% DSCT","CONFIRM.","STOCK","TOTAL", "VTA/USD"/*"TOT. ACM."*/, "VTA/UN.VTA"/*"PMD/UND"*/,"FECHA","VTA/USD","%CUMPL."};
 		return idColumnas;
 	}
 	

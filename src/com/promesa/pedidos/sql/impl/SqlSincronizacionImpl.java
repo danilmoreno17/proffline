@@ -32,6 +32,7 @@ import com.promesa.pedidos.bean.BeanJerarquia;
 import com.promesa.pedidos.bean.BeanMaterial;
 import com.promesa.pedidos.bean.BeanSede;
 import com.promesa.pedidos.bean.BeanTipologia;
+import com.promesa.pedidos.bean.BeanVentaCruzada;
 import com.promesa.pedidos.sql.SqlAgenda;
 import com.promesa.pedidos.sql.SqlBloqueoEntrega;
 import com.promesa.pedidos.sql.SqlCondicionPago;
@@ -271,6 +272,48 @@ public class SqlSincronizacionImpl implements SqlSincronizacion {
 		}
 		return resultado;
 	}
+
+	@SuppressWarnings({})
+	public boolean sincronizaVentaCruzada() {
+		resultado = false;
+		List<BeanVentaCruzada> listaVentaCruzada;
+		SqlMaterial sqlMaterial = new SqlMaterialImpl();
+		try {
+			objSAP = new SPedidos();
+			listaVentaCruzada = objSAP.listaCategoriaVentaCruzada(Promesa.getInstance().datose.get(0).getStrCodigo());
+			if (listaVentaCruzada != null) {
+				sqlMaterial.setInsertarActualizarVentaCruzada(listaVentaCruzada);
+			}
+			resultado = true;
+		} catch (Exception e) {
+			Mensaje.mostrarError(e.getMessage());
+			resultado = false;
+		}
+		return resultado;
+	}
+	
+	@SuppressWarnings({})
+	public boolean sincronizaMaterialVentaCruzada() {
+		resultado = false;
+		List<List<BeanMaterial>> listaVtaCrz = null;
+		List<BeanMaterial> listaTodosMaterial;
+		List<BeanMaterial> listaMaterialVtaCrz;
+		SqlMaterial sqlMaterial = new SqlMaterialImpl();
+		try {
+			objSAP = new SPedidos();
+			listaTodosMaterial = sqlMaterial.obtenerTodosMateriales2();
+			listaVtaCrz  = objSAP.listaMaterialesVentaCruzada(Promesa.getInstance().datose.get(0).getStrCodigo());
+			if (listaVtaCrz != null && listaVtaCrz.size() > 0&& listaVtaCrz.get(0) != null) {
+				listaMaterialVtaCrz = buscarJerarquiaMateriales(listaTodosMaterial, listaVtaCrz.get(0), "Consultando por Venta Cruzada.");
+				sqlMaterial.migrarMaterialesVentaCruzada(listaVtaCrz, listaMaterialVtaCrz);
+				listaMaterialVtaCrz.clear();
+				resultado = true;
+			}
+		} catch (Exception e) {
+			Mensaje.mostrarError(e.getMessage());
+		}
+		return resultado;
+	}
 	
 	// SYNCHRONIZED MATERIAL - VER SOBRE LA TABLA PROFFLINE_TB_MATERIAL_STOCK
 	@SuppressWarnings({})
@@ -326,6 +369,7 @@ public class SqlSincronizacionImpl implements SqlSincronizacion {
 		List<List<BeanMaterial>> lista = null;
 		List<List<BeanMaterial>> listaTopCli = null;
 		List<List<BeanMaterial>> listaTopTipo = null;
+		List<List<BeanMaterial>> listaVtaCrz = null;
 		List<BeanMaterial> listaMaterial;
 		List<BeanMaterial> listaTodosMaterial;
 		List<BeanMaterial> listaMaterialtipologia;
@@ -371,6 +415,12 @@ public class SqlSincronizacionImpl implements SqlSincronizacion {
 				sqlMaterial.migrarMaterialesTopTipologia2(listaTopTipo, listaMaterialtipologia);
 				listaMaterialtipologia.clear();
 			}
+			/*listaVtaCrz  = objSAP.listaMaterialesVentaCruzada(Promesa.getInstance().datose.get(0).getStrCodigo());
+			if (listaVtaCrz != null && listaVtaCrz.size() > 0&& listaVtaCrz.get(0) != null) {
+				listaMaterialtipologia = buscarJerarquiaMateriales(listaTodosMaterial, listaVtaCrz.get(0), "Consultando por Venta Cruzada.");
+				sqlMaterial.migrarMaterialesVentaCruzada(listaVtaCrz, listaMaterialtipologia);
+				listaMaterialtipologia.clear();
+			}*/
 		} catch (Exception e) {
 			Mensaje.mostrarError(e.getMessage());
 		}
@@ -708,9 +758,12 @@ public class SqlSincronizacionImpl implements SqlSincronizacion {
 					String escala = v[12];
 					String nroRegCond = v[13].isEmpty() ? "*" : "" + Long.parseLong(v[13]);
 					String num = v[14].isEmpty() ? "*" : v[14];
+					String matnr = "*";
+					if(v.length==16)
+						matnr = v[15].isEmpty() ? "*" : ""+Integer.parseInt(v[15]);
 					sql = "insert into PROFFLINE_TB_CONDICION_2X values('" + nivel + "','" + claseCond + "','" + acceso + "','" 
 							+ tablaCond + "','" + prioridad + "','" + cliente + "','"  + grupoCliente + "','" + canal 
-							+ "','" + unidad + "','" + importe + "','" + escala + "','" + nroRegCond + "','"  + num + "');";
+							+ "','" + unidad + "','" + importe + "','" + escala + "','" + nroRegCond + "','"  + num + "','" + matnr + "');";
 					rs = new ResultExecute(sql, Constante.BD_SYNC);
 				}
 			} else if (tabla.compareTo("ZTSD_ZD3X") == 0) {

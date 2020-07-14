@@ -18,9 +18,12 @@ import com.promesa.pedidos.bean.BeanCondicionComercial4x;
 import com.promesa.pedidos.bean.BeanCondicionComercial5x;
 import com.promesa.pedidos.bean.BeanCondicionComercialEscala;
 import com.promesa.pedidos.bean.BeanMaterial;
+import com.promesa.pedidos.bean.BeanVentaCruzada;
 import com.promesa.pedidos.sql.SqlMaterial;
 import com.promesa.util.Constante;
 import com.promesa.util.Util;
+
+
 
 //import java.io.Console;
 import java.sql.Connection;
@@ -288,6 +291,76 @@ public class SqlMaterialImpl implements SqlMaterial {
 		
 	}	
 
+	@Override
+	public void setInsertarActualizarVentaCruzada(List<BeanVentaCruzada> listm) {
+		try{
+			List<String> listaSQL = new ArrayList<String>();
+			listaSQL.add("DELETE FROM PROFFLINE_TB_VENTA_CRUZADA");
+			ResultExecuteList resultExecute = new ResultExecuteList();
+			resultExecute.insertarListaConsultas(listaSQL, "", Constante.BD_SYNC);
+			listaSQL = new ArrayList<String>();
+			int i = 0;
+			for (BeanVentaCruzada m : listm) {
+				String cadenaSQL = 	" INSERT INTO PROFFLINE_TB_VENTA_CRUZADA("
+						+ "txtIdCliente, "
+						+ "txtDescripcionCategoria, "
+						+ "txtAnio, "
+						+ "txtVentaReal, "
+						+ "txtOportunidad, "
+						+ "txtObjetivo, " 
+						+"txtCumplimiento) VALUES ("
+						+ "'" + m.getStrCodCliente() + "', "
+						+ "'" + m.getStrCategoria() + "', "
+						+ "'" + m.getStrAnio() + "', "
+						+ "'" + m.getDblVentaReal() + "', "
+						+ "'" + m.getDblOportunidad() + "', "
+						+ "'" + m.getDblObjetivo() + "', "
+						+ "'" + m.getDblCumplimiento() + "');";
+				i++;
+				listaSQL.add(cadenaSQL);
+			}
+			ResultExecuteList resultExecute2 = new ResultExecuteList();
+	 		resultExecute2.insertarListaConsultas(listaSQL, "Venta Cruzada", Constante.BD_SYNC);
+			}catch(Exception e){
+				
+			}
+		
+	}	
+	
+
+	public List<BeanVentaCruzada> getListVentaCruzadaCliente(String strCodigoCliente){
+		List<BeanVentaCruzada> listaVentaCruzada = new ArrayList<BeanVentaCruzada>();
+		ResultExecuteQuery resultExecuteQuery = null;
+		BeanVentaCruzada vtacrz = null;
+		column = new HashMap();
+		column.put("String:0", "txtIdCliente");
+		column.put("String:1", "txtDescripcionCategoria");
+		column.put("String:2", "txtAnio");
+		column.put("String:3", "txtVentaReal");
+		column.put("String:4", "txtOportunidad");
+		column.put("String:5", "txtObjetivo");
+		column.put("String:6", "txtCumplimiento");
+		String sqlVentaCruzada = " SELECT txtIdCliente, txtDescripcionCategoria, txtAnio, txtVentaReal, txtOportunidad, txtObjetivo, txtCumplimiento FROM PROFFLINE_TB_VENTA_CRUZADA where txtIdCliente='" + strCodigoCliente + "'";
+		try {
+			resultExecuteQuery = new ResultExecuteQuery(sqlVentaCruzada, column, Constante.BD_SYNC);
+			mapResultado = resultExecuteQuery.getMap();
+			for(HashMap res:mapResultado.values()){	
+				vtacrz = new BeanVentaCruzada();
+				vtacrz.setStrCodCliente(res.get("txtIdCliente").toString());
+				vtacrz.setStrCategoria(res.get("txtDescripcionCategoria").toString());
+				vtacrz.setStrAnio(res.get("txtAnio").toString());
+				vtacrz.setDblVentaReal(Double.valueOf(res.get("txtVentaReal").toString()));
+				vtacrz.setDblOportunidad(Double.valueOf(res.get("txtOportunidad").toString()));
+				vtacrz.setDblObjetivo(Double.valueOf(res.get("txtObjetivo").toString()));
+				vtacrz.setDblCumplimiento(Double.valueOf(res.get("txtCumplimiento").toString()));
+				listaVentaCruzada.add(vtacrz);
+			}
+		} catch (Exception e) {
+			Util.mostrarExcepcion(e);
+		}
+		return listaVentaCruzada;
+	}
+	
 	public void setInsertarMaterial(List<BeanMaterial> listm) {
 		final List<String> listaSQL = new ArrayList<String>();
 		for (BeanMaterial m : listm) {
@@ -1075,18 +1148,121 @@ public class SqlMaterialImpl implements SqlMaterial {
 			String tipologia = listt.get(0).get(i).getStrCodCliente();
 			String cadenaSQL = 	" INSERT INTO PROFFLINE_TB_MATERIAL_TOP_TIPOLOGIA(MATNR, STOCK, S_U, SHORT_TEXT, TEXT_LINE, TARGET_QTY, " +
 								"PRICE_1, PRICE_2, PRICE_3, PRICE_4, PRDHA, HER, NORMT, ZZORDCO, CELL_DESIGN, MTART, TYPEMAT, " +
-								"GRUPO_COMPRA, ST_1, VENTAS_ACUMULADO, VENTAS_PROMEDIO, CLIENTE) VALUES ('" + m.getIdMaterial() + "', '" +
+								"GRUPO_COMPRA, ST_1, VENTAS_ACUMULADO, VENTAS_PROMEDIO, CLIENTE, VENTA_REAL) VALUES ('" + m.getIdMaterial() + "', '" +
 								m.getStock() + "','" + m.getUn() + "','" + m.getDescripcion() + "','" + m.getText_line() + "','" +
 								m.getTarget_qty() + "','" + m.getPrice_1() + "','" + m.getPrice_2() + "','" + m.getPrice_3() + "','" +
 								m.getPrice_4() + "','" + m.getPrdha() + "','" + m.getTipoMaterial() + "','" + m.getNormt() + "','" +
 								m.getZzordco() + "','" + m.getCell_design() + "','" + m.getMtart() + "','" + m.getTypeMat() + "','" +
 								m.getGrupo_compra() + "','" + m.getSt_1() + "','" + m.getDblAcumulado() + "','" + m.getDblPromedio() + "','" +
-								tipologia + "');";
+								tipologia + "','"+m.getStrVentaReal()+"');";
 			i++;
 			listaSQL.add(cadenaSQL);
 		}
 		ResultExecuteList resultExecute2 = new ResultExecuteList();
 		resultExecute2.insertarListaConsultas(listaSQL, "Top por tipología 2", Constante.BD_SYNC);
+	}
+	
+	public void migrarMaterialesVentaCruzada(List<List<BeanMaterial>> listt, List<BeanMaterial> listaMateriales) {
+		try{
+		List<String> listaSQL = new ArrayList<String>();
+		listaSQL.add("DELETE FROM PROFFLINE_TB_MATERIAL_VENTA_CRUZADA");
+		ResultExecuteList resultExecute = new ResultExecuteList();
+		resultExecute.insertarListaConsultas(listaSQL, "", Constante.BD_SYNC);
+		
+//		List<BeanMaterial> listaMateriales = obtenerTodosMateriales(listt.get(0));
+		
+		listaSQL = new ArrayList<String>();
+//		for (BeanMaterial m : listt.get(0)) {
+		int i = 0;
+		for (BeanMaterial m : listaMateriales) {
+			String tipologia = listt.get(0).get(i).getStrCodCliente();
+			String cadenaSQL = 	" INSERT INTO PROFFLINE_TB_MATERIAL_VENTA_CRUZADA(MATNR, STOCK, S_U, SHORT_TEXT, TEXT_LINE, TARGET_QTY, " +
+								"PRICE_1, PRICE_2, PRICE_3, PRICE_4, PRDHA, HER, NORMT, ZZORDCO, CELL_DESIGN, MTART, TYPEMAT, " +
+								"GRUPO_COMPRA, ST_1, VENTAS_ACUMULADO, VENTAS_PROMEDIO, CLIENTE, VENTA_REAL) VALUES ('" + m.getIdMaterial() + "', '" +
+								m.getStock() + "','" + m.getUn() + "','" + m.getDescripcion() + "','" + m.getText_line() + "','" +
+								m.getTarget_qty() + "','" + m.getPrice_1() + "','" + m.getPrice_2() + "','" + m.getPrice_3() + "','" +
+								m.getPrice_4() + "','" + m.getPrdha() + "','" + m.getTipoMaterial() + "','" + m.getNormt() + "','" +
+								m.getZzordco() + "','" + m.getCell_design() + "','" + m.getMtart() + "','" + m.getTypeMat() + "','" +
+								m.getGrupo_compra() + "','" + m.getSt_1() + "','" + m.getDblAcumulado() + "','" + m.getDblPromedio() + "','" +
+								tipologia + "','"+m.getStrVentaReal()+"');";
+			i++;
+			listaSQL.add(cadenaSQL);
+		}
+		ResultExecuteList resultExecute2 = new ResultExecuteList();
+ 		resultExecute2.insertarListaConsultas(listaSQL, "Venta Cruzada", Constante.BD_SYNC);
+		}catch(Exception e){
+			
+		}
+	}
+	
+	public List<BeanMaterial> obtenerMaterialesTopCliente(String strCodigoCliente){
+		List<BeanMaterial> materiales = new ArrayList<BeanMaterial>();
+		
+		column = new HashMap();
+		column.put("String:0", MATNR);
+		column.put("String:1", STOCK);
+		column.put("String:2", S_U);
+		column.put("String:3", SHORT_TEXT);
+		column.put("String:4", TEXT_LINE);
+		column.put("String:5", TARGET_QTY);
+		column.put("String:6", PRICE_1);
+		column.put("String:7", PRICE_2);
+		column.put("String:8", PRICE_3);
+		column.put("String:9", PRICE_4);
+		column.put("String:10", PRDHA);
+		column.put("String:11", HER);
+		column.put("String:12", NORMT);
+		column.put("String:13", ZZORDCO);
+		column.put("String:14", CELL_DESIGN);
+		column.put("String:15", MTART);
+		column.put("String:16", TYPEMAT);
+		column.put("String:17", GRUPO_COMPRA);
+		column.put("String:18", ST_1);
+		column.put("String:19", "VENTAS_ACUMULADO");
+		column.put("String:20", "VENTAS_PROMEDIO");
+		column.put("String:21", "CLIENTE");
+		ResultExecuteQuery resultExecuteQuery = null;
+		String sql = "SELECT * FROM PROFFLINE_TB_MATERIAL_TOP_CLIENTE WHERE CLIENTE = '"+strCodigoCliente+"';";
+		try {
+			double avance = 0;
+			resultExecuteQuery = new ResultExecuteQuery(sql, column, Constante.BD_SYNC);
+			if(resultExecuteQuery != null){
+				mapResultado = resultExecuteQuery.getMap();
+				if(mapResultado.size() > 0){
+					int total = mapResultado.size();
+					for(int i = 0; i < mapResultado.size(); i++){
+						HashMap res = (HashMap) mapResultado.get(i);
+						BeanMaterial material = new BeanMaterial();
+						material.setIdMaterial(res.get(MATNR).toString());
+						material.setStock(res.get(STOCK).toString());
+						material.setUn(res.get(S_U).toString());
+						material.setDescripcion(res.get(SHORT_TEXT).toString());
+						material.setText_line(res.get(TEXT_LINE).toString());
+						material.setTarget_qty(res.get(TARGET_QTY).toString());
+						material.setPrice_1(res.get(PRICE_1).toString());
+						material.setPrice_2(res.get(PRICE_2).toString());
+						material.setPrice_3(res.get(PRICE_3).toString());
+						material.setPrice_4(res.get(PRICE_4).toString());
+						material.setPrdha(res.get(PRDHA).toString());
+						material.setTipoMaterial(res.get(HER).toString());
+						material.setNormt(res.get(NORMT).toString());
+						material.setZzordco(res.get(ZZORDCO).toString());
+						material.setCell_design(res.get(CELL_DESIGN).toString());
+						material.setMtart(res.get(MTART).toString());
+						material.setTypeMat(res.get(TYPEMAT).toString());
+						material.setGrupo_compra(res.get(GRUPO_COMPRA).toString());
+						material.setSt_1(res.get(ST_1).toString());
+						material.setStrVentasAcumulado(res.get("VENTAS_ACUMULADO").toString());
+						material.setStrVentasPromedio(res.get("VENTAS_PROMEDIO").toString());
+						material.setStrCliente(res.get("CLIENTE").toString());
+						materiales.add(material);
+					}			
+				}
+			}
+		}catch(Exception ex) {
+			return null;
+		}
+		return materiales;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -1325,6 +1501,9 @@ public class SqlMaterialImpl implements SqlMaterial {
 		}
 		return listaCondicion;
 	}
+	
+	
+	//TODO 
 	@SuppressWarnings("unchecked")
 	public List<BeanCondicionComercial2> listarCondicion2(BeanCondicionComercial2 b) {
 		List<BeanCondicionComercial2> listaCondicion = new ArrayList<BeanCondicionComercial2>();
@@ -1346,15 +1525,16 @@ public class SqlMaterialImpl implements SqlMaterial {
 		column.put("String:11", "NROREGCOND");
 		column.put("String:12", "NUM");
 
-		sqlMaterial = " select * from proffline_tb_condicion_2x where " + " (cliente='" + b.getStrCliente()
-				+ "' and grupocliente='*' and canal='*') or " + " (cliente='" + b.getStrCliente()
-				+ "' and grupocliente='" + b.getStrGrupoCliente() + "' and canal='*') or " + " (cliente='"
-				+ b.getStrCliente() + "' and grupocliente='" + b.getStrGrupoCliente() + "' and canal='"
-				+ b.getStrCanal() + "') or " + " (cliente='*' and grupocliente='" + b.getStrGrupoCliente()
-				+ "' and canal='*') or " + " (cliente='" + b.getStrCliente() + "' and grupocliente='"
-				+ b.getStrGrupoCliente() + "' and canal='*') or " + " (cliente='*' and grupocliente='*' and canal='"
-				+ b.getStrCanal() + "') or " + " (cliente='" + b.getStrCliente() + "' and grupocliente='*' and canal='"
-				+ b.getStrCanal() + "') " + " order by nivel,acceso,prioridad limit 1; ";
+		sqlMaterial = " select * from proffline_tb_condicion_2x where " 
+				+ " (cliente='" + b.getStrCliente() + "' and grupocliente='*' and canal='*' and MATNR='*') or " 
+				+ " (cliente='" + b.getStrCliente()	+ "' and grupocliente='" + b.getStrGrupoCliente() + "' and canal='*' and MATNR='*') or " 
+				+ " (cliente='" + b.getStrCliente() + "' and grupocliente='" + b.getStrGrupoCliente() + "' and canal='" + b.getStrCanal() + "' and MATNR='*') or " 
+				+ " (cliente='*' and grupocliente='" + b.getStrGrupoCliente() + "' and canal='*' and MATNR='*') or " 
+				+ " (cliente='" + b.getStrCliente() + "' and grupocliente='" + b.getStrGrupoCliente() + "' and canal='*' and MATNR='*') or " 
+				+ " (cliente='*' and grupocliente='*' and canal='" + b.getStrCanal() + "' and MATNR='" + b.getStrMATNR() + "') or "
+				+ " (cliente='*' and grupocliente='*' and canal='" + b.getStrCanal() + "' and MATNR='*') or " 
+				+ " (cliente='" + b.getStrCliente() + "' and grupocliente='*' and canal='" + b.getStrCanal() + "' and MATNR='*') " 
+				+ " order by nivel,acceso,prioridad limit 1; ";
 		try {
 			resultExecuteQuery = new ResultExecuteQuery(sqlMaterial, column, Constante.BD_SYNC);
 			mapResultado = resultExecuteQuery.getMap();

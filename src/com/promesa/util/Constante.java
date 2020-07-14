@@ -346,6 +346,7 @@ public class Constante {
 	public static final String DESCUENTOPOLITICA = "DescuentoPolitica";
 	public static final String TOPCLIENTE = "TopCliente";
 	public static final String TOPTIPOLOGIA = "TopTipologia";
+	public static final String VENTACRUZADA = "Venta Cruzada";
 	public static final String MENSAJE_ERROR_VISITA_CLIENTE_EXISTENTE = "El cliente ya tiene una visita para esa fecha!!";
 
 }

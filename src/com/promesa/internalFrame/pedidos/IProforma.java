@@ -31,6 +31,9 @@ import com.promesa.pedidos.bean.BeanPedidoHeader;
 import com.promesa.pedidos.sql.SqlAgenda;
 import com.promesa.pedidos.sql.impl.SqlAgendaImpl;
 import com.promesa.pedidos.sql.impl.SqlBloqueoEntregaImpl;
+import com.promesa.planificacion.bean.BeanCliente;
+import com.promesa.planificacion.sql.SqlCliente;
+import com.promesa.planificacion.sql.impl.SqlClienteImpl;
 import com.promesa.util.Constante;
 import com.promesa.util.DLocker;
 import com.promesa.util.Mensaje;
@@ -41,7 +44,10 @@ public class IProforma extends IPedidos {
 	
 	public IProforma(BeanAgenda ba,String claseRiesgo, String limiteCredito, String disponibilidad, String titulo, String tituloReporte) {
 		super(ba.getBEGDA(),null, ba.getStrCodigoCliente(), ba.getStrNombreCliente(), claseRiesgo, limiteCredito, disponibilidad, ba.getStrCondicionPago(), titulo, tituloReporte, "ZP05", Constante.VENTANA_CREAR_PROFORMA);
-		setTitle("Proforma " + codigoCliente + "-" + nombreCliente);
+		BeanCliente cl = new BeanCliente();
+		SqlCliente getCliente = new SqlClienteImpl();
+		cl = getCliente.obtenerCliente(codigoCliente);
+		setTitle("Proforma " + codigoCliente + "-" + nombreCliente + "-" + cl.getStrCanal());
 		tituloImpresion = "Proforma";
 		txtBloqEntrega.setEditable(true);
 		btnImprimirComprobante.setVisible(false);

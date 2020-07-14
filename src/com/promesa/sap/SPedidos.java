@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.swing.JOptionPane;
+import javax.swing.UIManager;
 
 import util.ConexionSAP;
 
@@ -40,6 +41,7 @@ import com.promesa.pedidos.bean.BeanPedidoHeader;
 import com.promesa.pedidos.bean.BeanPedidoPartners;
 import com.promesa.pedidos.bean.BeanSede;
 import com.promesa.pedidos.bean.BeanTipologia;
+import com.promesa.pedidos.bean.BeanVentaCruzada;
 import com.promesa.pedidos.bean.Indicador;
 import com.promesa.pedidos.bean.MarcaEstrategica;
 import com.promesa.pedidos.bean.MarcaVendedor;
@@ -55,7 +57,11 @@ import com.promesa.util.Util;
 public class SPedidos {
 	public static final String PRECIO_NETO_CERO = "0.0";
 	public static final String MATERIAL_POP = "950000";
-
+	
+	public static void main(String[] args) {
+		//listaMaterialesVentaCruzada("0000080323");
+		//listaCategoriaVentaCruzada("0000080323");
+	}
 	@SuppressWarnings({ "rawtypes", "unused" })
 	public List<String[]> obtenerItemsSimulados(BeanPedido pedido) {
 		try {
@@ -1065,13 +1071,16 @@ public class SPedidos {
 					bean.setStrMarcaBloqueoAlmacen(valores[19]);
 					bean.setStrCodigoTipologia(valores[20]);
 					bean.setStrDescripcionTipologia(valores[21]);
-					
 					try{
 						bean.setStrClase(valores[22]);
 					} catch (IndexOutOfBoundsException indexEx){
 						bean.setStrClase("");
 					}
-					
+					try{
+						bean.setStrCanal(valores[23]);						
+					}catch(IndexOutOfBoundsException indexEx){
+						bean.setStrCanal("");
+					}
 					long id_cliente = Long.parseLong(valores[1]);
 					strCodCliente = strCodCliente.trim();
 					strNombreCiente = strNombreCiente.trim();
@@ -1517,6 +1526,87 @@ public class SPedidos {
 		}
 	}
 
+	@SuppressWarnings("rawtypes")
+	public List<List<BeanMaterial>> listaMaterialesVentaCruzada(String strCodVendedor) {
+		try {
+			List<List<BeanMaterial>> listaFinal = new ArrayList<List<BeanMaterial>>();
+			List<BeanMaterial> listaTemp = null;
+			Promesa.getInstance().mostrarAvisoSincronizacion("SAP: Top de materiales");
+			ConexionSAP con = Conexiones.getConexionSAP();
+			if (con != null) {
+				Promesa.getInstance().mostrarAvisoSincronizacion("SAP: Top de materiales");
+				listaTemp = new ArrayList<BeanMaterial>();
+				con.RegistrarRFC("ZSD_RFC_VTACRUZ_MATNR");
+				con.IngresarDatosInput(strCodVendedor, "V_KUNRG");
+				con.EjecutarRFC();
+				con.CreaTabla("ET_MATERIAL");
+				List ur1 = con.ObtenerDatosTabla();
+				con.DesconectarSAP();
+				String[] values = null;
+				BeanMaterial bm = null;
+				for (int i = 0; i < ur1.size(); i++) {
+					Promesa.getInstance().mostrarAvisoSincronizacion("SAP: Top de materiales");
+					String cadena = String.valueOf(ur1.get(i));
+					values = cadena.split("¬");
+					bm = new BeanMaterial();
+					bm.setIdMaterial("" + Integer.parseInt(values[2]));
+					bm.setDblAcumulado(Double.parseDouble(values[3]));
+					bm.setDblPromedio(Double.parseDouble(values[4]));
+					bm.setStrCodCliente("" + Integer.parseInt(values[1]));
+					bm.setStrVentaReal(""+Double.parseDouble(values[4]));
+					listaTemp.add(bm);
+				}
+				Promesa.getInstance().mostrarAvisoSincronizacion("");
+				listaFinal.add(listaTemp);
+				return listaFinal;
+			} else {
+				return null;
+			}
+		} catch (Exception e) {
+			Util.mostrarExcepcion(e);
+			return null;
+		}
+	}
+	
+	public List<BeanVentaCruzada> listaCategoriaVentaCruzada(String strCodVendedor){
+		try{
+			Promesa.getInstance().mostrarAvisoSincronizacion("SAP: Venta Cruzada");
+			List<BeanVentaCruzada> listaTemp = new ArrayList();
+			ConexionSAP con = Conexiones.getConexionSAP();
+			if (con != null) {
+				Promesa.getInstance().mostrarAvisoSincronizacion("SAP: Venta Cruzada");
+				con.RegistrarRFC("ZSD_RFC_VTACRUZ_CATEG");
+				con.IngresarDatosInput(strCodVendedor, "V_KUNRG");
+				con.EjecutarRFC();
+				con.CreaTabla("ET_MATERIAL");
+				List ur1 = con.ObtenerDatosTabla();
+				con.DesconectarSAP();
+				String[] values = null;
+				BeanVentaCruzada bm = null;
+				for (int i = 0; i < ur1.size(); i++) {
+					Promesa.getInstance().mostrarAvisoSincronizacion("SAP: Venta Cruzada");
+					String cadena = String.valueOf(ur1.get(i));
+					values = cadena.split("¬");
+					bm = new BeanVentaCruzada();
+					bm.setStrAnio("" + Integer.parseInt(values[1]));
+					bm.setStrCodCliente("" + Integer.parseInt(values[2]));
+					bm.setStrCategoria(values[3]);
+					bm.setDblOportunidad(Double.parseDouble(values[4]));
+					bm.setDblObjetivo(Double.parseDouble(values[5]));
+					bm.setDblVentaReal(Double.parseDouble(values[6]));
+					Double cump = bm.getDblVentaReal()/bm.getDblObjetivo();
+					bm.setDblCumplimiento(cump);
+					listaTemp.add(bm);
+				}
+				Promesa.getInstance().mostrarAvisoSincronizacion("");
+				return listaTemp;
+			}
+		}catch(Exception e){
+			System.out.print(e.getMessage());
+		}
+		return null;
+	}
+	
 	@SuppressWarnings("rawtypes")
 	public List<List<BeanMaterial>> listaMaterialesTopTipol(String strCodVendedor) {
 		List<List<BeanMaterial>> listaFinal = new ArrayList<List<BeanMaterial>>();

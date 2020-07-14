@@ -29,6 +29,16 @@ public class BeanCliente {
 	private String strCodCanalDist;
 	private String strCodSector;
 	private String strClase;
+	private String strCanal;
+	
+	public String getStrCanal() {
+		return strCanal;
+	}
+
+	public void setStrCanal(String strCanal) {
+		this.strCanal = strCanal;
+	}
+
 	public String getStrClase() {
 		return strClase;
 	}

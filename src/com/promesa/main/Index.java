@@ -171,7 +171,7 @@ KeyListener {
 			lblLogo.setIcon(new ImageIcon(ulrLogo));
 			lblLogo.setForeground(Color.blue.darker().darker());
 			lblLogo.setFont(new java.awt.Font("Tahoma", Font.BOLD, 16)); // NOI18N
-			lblLogo.setText("RC 2.6");
+			lblLogo.setText("RC 2.7");
 			lblLogo.setVerticalAlignment(javax.swing.SwingConstants.CENTER);
 			lblLogo.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
 		}

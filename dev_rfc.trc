@@ -8153,3 +8153,45 @@ ERRNO       10060
 ERRNO TEXT  WSAETIMEDOUT: Connection timed out
 COUNTER     1
 
+
+**** ERROR file opened at , SAP-REL 710,0,0 RFC-VER 3 880476 MT-SL
+T:2212 Error in program 'javaw': ======> Connect to SAP gateway failed
+Connect_PM  GWHOST=10.10.10.29, GWSERV=sapgw01, SYSNR=01
+
+LOCATION    CPIC (TCP/IP) on local host
+ERROR       partner '10.10.10.29:3301' not reached
+
+TIME        Wed Jun 10 09:58:03 2020
+RELEASE     710
+COMPONENT   NI (network interface)
+VERSION     39
+RC          -10
+MODULE      nixxi.cpp
+LINE        2985
+DETAIL      NiPConnect2
+SYSTEM CALL connect
+ERRNO       10060
+ERRNO TEXT  WSAETIMEDOUT: Connection timed out
+COUNTER     1
+
+
+**** ERROR file opened at , SAP-REL 710,0,0 RFC-VER 3 880476 MT-SL
+T:3356 Error in program 'javaw': ======> Connect to SAP gateway failed
+Connect_PM  GWHOST=10.10.10.29, GWSERV=sapgw01, SYSNR=01
+
+LOCATION    CPIC (TCP/IP) on local host
+ERROR       partner '10.10.10.29:3301' not reached
+
+TIME        Thu Jul 09 19:57:54 2020
+RELEASE     710
+COMPONENT   NI (network interface)
+VERSION     39
+RC          -10
+MODULE      nixxi.cpp
+LINE        2985
+DETAIL      NiPConnect2
+SYSTEM CALL connect
+ERRNO       10060
+ERRNO TEXT  WSAETIMEDOUT: Connection timed out
+COUNTER     1
+

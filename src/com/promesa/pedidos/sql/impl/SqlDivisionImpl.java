@@ -533,6 +533,123 @@ public class SqlDivisionImpl implements SqlDivision {
 		}
 		return materiales;
 	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public List<BeanMaterial> buscarMaterialesVentaCruzada(int tipo, String codigo, String shortText, String longText,
+			String codigoMaterial, String tipologia, int t, String marca, String strCodCliente) {
+
+		codigo = codigo.replaceAll("'", "");
+		shortText = shortText.replaceAll("'", "");
+		longText = longText.replaceAll("'", "");
+		codigoMaterial = codigoMaterial.replaceAll("'", "");
+		tipologia = tipologia.replaceAll("'", "");
+		marca = marca.replaceAll("'", "");
+		List<BeanMaterial> materiales = new ArrayList<BeanMaterial>();
+		column = new HashMap();
+		column.put("String:0", "MATNR");
+		column.put("String:1", "STOCK");
+		column.put("String:2", "S_U");
+		column.put("String:3", "SHORT_TEXT");
+		column.put("String:4", "TEXT_LINE");
+		column.put("String:5", "TARGET_QTY");
+		column.put("String:6", "PRICE_1");
+		column.put("String:7", "PRICE_2");
+		column.put("String:8", "PRICE_3");
+		column.put("String:9", "PRICE_4");
+		column.put("String:10", "PRDHA");
+		column.put("String:11", "HER");
+		column.put("String:12", "NORMT");
+		column.put("String:13", "ZZORDCO");
+		column.put("String:14", "CELL_DESIGN");
+		column.put("String:15", "TYPEMAT");
+		column.put("String:16", "GRUPO_COMPRA");
+		column.put("String:17", "ST_1");
+		column.put("String:18", "VENTAS_ACUMULADO");
+		column.put("String:19", "VENTAS_PROMEDIO");
+		column.put("String:20", "CLIENTE");
+		column.put("String:21", "VENTA_REAL");
+		
+		String type = ObtenerType(t);
+
+		String strCadena1 = "";
+		String strCadena2 = "";
+		String strCadena3 = "";
+		String sqlSelect = "SELECT * FROM PROFFLINE_TB_MATERIAL_VENTA_CRUZADA WHERE CLIENTE ='" + strCodCliente + "' AND";
+		if (shortText != null && !shortText.isEmpty()) {
+			shortText = shortText.trim();
+			strCadena1 = "(PRDHA LIKE '" + codigo + "%' AND SHORT_TEXT LIKE '%" + shortText + "%'" + type + ") ";
+		}
+		if (marca != null && !marca.isEmpty()) {
+			marca = marca.trim();
+			strCadena2 = "(PRDHA LIKE '" + codigo + "%' AND NORMT LIKE '%" + marca + "%'" + type + ") ";
+		}
+		if (longText != null && !longText.isEmpty()) {
+			longText = longText.trim();
+			strCadena3 = "(PRDHA LIKE '" + codigo + "%' AND TEXT_LINE LIKE '%" + longText + "%' " + type +") ";
+		}
+
+		if (!strCadena1.equals("")) {
+			sqlSelect = sqlSelect + strCadena1;
+		}
+		if (!strCadena2.equals("")) {
+			sqlSelect = sqlSelect + " OR " + strCadena2;
+		}
+		if (!strCadena3.equals("")) {
+			sqlSelect = sqlSelect + " OR " + strCadena3;
+		}
+		if (strCadena1.equals("") && strCadena2.equals("") && strCadena3.equals("")) {
+			sqlSelect = sqlSelect + " PRDHA LIKE '" + codigo + "%' " + type;
+		}
+
+		if (codigoMaterial != null && !codigoMaterial.isEmpty()) {
+			codigoMaterial = codigoMaterial.trim();
+			String sql_temp = "OR MATNR LIKE '";
+			for (int i = 0; i < codigoMaterial.length(); i++) {
+				char c = codigoMaterial.charAt(i);
+				if (c == '*') {
+					sql_temp += "%";
+				} else {
+					sql_temp += c;
+				}
+			}
+			sqlSelect = sqlSelect + sql_temp + "%'";
+		}
+		if (tipo == 2) {
+			if (tipologia != null) {
+				try {
+					tipologia = "" + Integer.parseInt(tipologia);
+				} catch (NumberFormatException e) {
+					tipologia = "";
+				}
+				sqlSelect = sqlSelect + " ";
+			}
+		}
+		sqlSelect = sqlSelect.trim() + " ORDER BY VENTAS_ACUMULADO DESC;";
+		ResultExecuteQuery resultExecuteQuery = new ResultExecuteQuery(sqlSelect, column, Constante.BD_SYNC);
+
+		mapResultado = resultExecuteQuery.getMap();
+		HashMap res = null;
+		for (int i = 0; i < mapResultado.size(); i++) {
+			res = (HashMap) mapResultado.get(i);
+			BeanMaterial material = new BeanMaterial();
+			material.setIdMaterial(res.get("MATNR").toString());
+			material.setUn(res.get("S_U").toString());
+			material.setText_line(res.get("TEXT_LINE").toString());
+			material.setDescripcion(res.get("SHORT_TEXT").toString());
+			material.setPrice_1(res.get("PRICE_1").toString());
+			material.setTipoMaterial(res.get("HER").toString());
+			material.setNormt(res.get("NORMT").toString());
+			material.setTypeMat(res.get("TYPEMAT").toString());
+			material.setDblAcumulado(Double.parseDouble(res.get("VENTAS_ACUMULADO").toString()));
+			material.setDblPromedio(Double.parseDouble(res.get("VENTAS_PROMEDIO").toString()));
+			material.setStrCodCliente(res.get("CLIENTE").toString());
+			material.setPrdha(res.get("PRDHA").toString());
+			material.setStrVentaReal(""+Double.parseDouble(res.get("VENTA_REAL").toString()));
+			materiales.add(material);
+		}
+		return materiales;
+	}
+	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public BeanMaterial getMaterial(String codigo) {
 		ResultExecuteQuery resultExecuteQuery = null;

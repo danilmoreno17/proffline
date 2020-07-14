@@ -7,12 +7,15 @@ import com.promesa.pedidos.bean.BeanClaseMaterial;
 import com.promesa.pedidos.bean.BeanCondicionComercial1;
 import com.promesa.pedidos.bean.BeanCondicionComercial2;
 import com.promesa.pedidos.bean.BeanMaterial;
+import com.promesa.pedidos.bean.BeanVentaCruzada;
 
 public interface SqlMaterial {
 	public void setListarMaterial();
 	public void setInsertarMaterial(List<BeanMaterial> listm);
 	public void setInsertarActualizarMaterial(List<BeanMaterial> listm);
 	public void setInsertarActualizarMaterialNuevo(List<BeanMaterial> listm);
+	public void setInsertarActualizarVentaCruzada(List<BeanVentaCruzada> listm);
+	public List<BeanVentaCruzada> getListVentaCruzadaCliente(String strCodigoCliente);
 	public void insertarMaterialesStock(List<BeanMaterial> listm);
 	public void migrarMaterialConsultaDinamica1(List<BeanMaterial> listm);
 	public void migrarMaterialConsultaDinamica2(List<BeanMaterial> listm);
@@ -21,6 +24,8 @@ public interface SqlMaterial {
 	
 	public void migrarMaterialesTopCliente2(List<List<BeanMaterial>> listm, List<BeanMaterial> listaMaterial);
 	public void migrarMaterialesTopTipologia2(List<List<BeanMaterial>> listm, List<BeanMaterial> listaMaterial);
+	public void migrarMaterialesVentaCruzada(List<List<BeanMaterial>> listm, List<BeanMaterial> listaMaterial);
+	
 	public List<BeanMaterial> obtenerTodosMateriales(List<BeanMaterial> listaMateriales, String mensaje);
 	public List<BeanMaterial> obtenerTodosMateriales2();
 	

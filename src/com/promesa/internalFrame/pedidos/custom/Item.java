@@ -60,7 +60,25 @@ public class Item {
 	private String descuentosManuales;
 	private boolean esmaterialnuevo=false;
 	private String strFech_Ing;
+	private Double dblValorReal=0d;
+	private Double dblCumplimiento=0d;
 	
+	public Double getDblValorReal() {
+		return dblValorReal;
+	}
+
+	public void setDblValorReal(Double dblValorReal) {
+		this.dblValorReal = dblValorReal;
+	}
+
+	public Double getDblCumplimiento() {
+		return dblCumplimiento;
+	}
+
+	public void setDblCumplimiento(Double dblCumplimiento) {
+		this.dblCumplimiento = dblCumplimiento;
+	}
+
 	public String getStrFech_Ing() {
 		return strFech_Ing;
 	}

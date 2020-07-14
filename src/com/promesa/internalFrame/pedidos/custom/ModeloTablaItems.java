@@ -412,7 +412,7 @@ public class ModeloTablaItems implements TableModel {
 		if(!itHijo.getCodigo().equals("")) {
 			SqlMaterialImpl sqlMateriales = new SqlMaterialImpl();
 			if(itPadre.getTipo() != 1) {
-				BeanDato usuario = Promesa.datose.get(0);
+				/*BeanDato usuario = Promesa.datose.get(0);
 				if (usuario.getStrModo().equals("1")) {// DESDE SAP
 					SPedidos objSAP = new SPedidos();
 					List<BeanMaterial> materiales =objSAP.listaMaterialesStock(itHijo.getCodigo());
@@ -420,9 +420,9 @@ public class ModeloTablaItems implements TableModel {
 						itHijo.setStock(materiales.get(0).getStock());
 					else
 						itHijo.setStock(sqlMateriales.obtenerStockMaterial(itHijo.getCodigo()));
-				}else {
+				}else {*/
 					itHijo.setStock(sqlMateriales.obtenerStockMaterial(itHijo.getCodigo()));
-				}
+				//}
 			}else {
 				itHijo.setStock(sqlMateriales.obtenerStockMaterial(itHijo.getCodigo()));
 			}

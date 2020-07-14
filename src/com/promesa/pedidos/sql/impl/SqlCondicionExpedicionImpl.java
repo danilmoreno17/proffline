@@ -26,7 +26,7 @@ public class SqlCondicionExpedicionImpl implements SqlCondicionExpedicion {
 		listaCondicionExpedicion = new ArrayList<BeanCondicionExpedicion>();
 		column.put("String:0", ID_CONDICION);
 		column.put("String:1", DESCRIPCION);
-		sqlCondicionExpedicion = "SELECT * FROM PROFFLINE_TB_CONDICION_EXPEDICION WHERE txtIdCondicion='01' OR txtIdCondicion='04'";
+		sqlCondicionExpedicion = "SELECT * FROM PROFFLINE_TB_CONDICION_EXPEDICION WHERE txtIdCondicion='01' OR txtIdCondicion='04' OR txtIdCondicion='08'";
 		ResultExecuteQuery resultExecuteQuery = new ResultExecuteQuery(sqlCondicionExpedicion, column, Constante.BD_SYNC);
 		mapResultado = resultExecuteQuery.getMap();
 		HashMap res = null;

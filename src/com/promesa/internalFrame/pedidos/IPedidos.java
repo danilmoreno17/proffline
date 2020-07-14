@@ -109,6 +109,7 @@ import com.promesa.pedidos.bean.BeanPedidoHeader;
 import com.promesa.pedidos.bean.BeanPedidoPartners;
 import com.promesa.pedidos.bean.BeanSede;
 import com.promesa.pedidos.bean.BeanTipoGestion;
+import com.promesa.pedidos.bean.BeanVentaCruzada;
 import com.promesa.pedidos.bean.Indicador;
 import com.promesa.pedidos.bean.MarcaEstrategica;
 import com.promesa.pedidos.bean.MarcaVendedor;
@@ -332,10 +333,14 @@ public abstract class IPedidos extends javax.swing.JInternalFrame implements Foc
 		btnGuiaVentas = new JButton();
 		btnSimularTodo = new JButton();
 		btnMaterialNuevo =new JButton();
+		btnVentaCruzada = new JButton();
+		btnVentaCruzadaCliente = new JButton();
 		btnResultadoMarca = new JButton(); 
 		separador5 = new JToolBar.Separator();
 		separador6 = new JToolBar.Separator();
 		separador7 = new JToolBar.Separator();
+		separador8 = new JToolBar.Separator();
+		separador9 = new JToolBar.Separator();
 		lblMensajes = new JLabel();
 		scroller = new JScrollPane();
 		tblPedidos = new JTable(){
@@ -499,25 +504,21 @@ public abstract class IPedidos extends javax.swing.JInternalFrame implements Foc
 
 			@Override
 			public void mouseEntered(MouseEvent arg0) {
-				// TODO Apéndice de método generado automáticamente
 				
 			}
 
 			@Override
 			public void mouseExited(MouseEvent e) {
-				// TODO Apéndice de método generado automáticamente
 				
 			}
 
 			@Override
 			public void mousePressed(MouseEvent e) {
-				// TODO Apéndice de método generado automáticamente
 				
 			}
 
 			@Override
 			public void mouseReleased(MouseEvent e) {
-				// TODO Apéndice de método generado automáticamente
 				
 			}
 		});
@@ -1041,12 +1042,41 @@ public abstract class IPedidos extends javax.swing.JInternalFrame implements Foc
 		btnMaterialNuevo.setVerticalTextPosition(SwingConstants.BOTTOM);
 		btnMaterialNuevo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				consultaDinamica(true);
+				consultaDinamica(3);
 				
 			}
 		});
 		mnuToolBarMiddle.add(btnMaterialNuevo);
+		
 		mnuToolBarMiddle.add(separador7);
+		btnVentaCruzada.setText("Venta Cruzada");
+		btnVentaCruzada.setBackground(Color.ORANGE);
+		btnVentaCruzada.setBorder(new SoftBevelBorder(BevelBorder.RAISED));
+		btnVentaCruzada.setFocusable(false);
+		btnVentaCruzada.setHorizontalTextPosition(SwingConstants.CENTER);
+		btnVentaCruzada.setVerticalTextPosition(SwingConstants.BOTTOM);
+		btnVentaCruzada.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				consultaDinamica(4);
+				
+			}
+		});
+		mnuToolBarMiddle.add(btnVentaCruzada);
+		
+		mnuToolBarMiddle.add(separador8);
+		btnVentaCruzadaCliente.setText("Venta Cruzada por Categoria");
+		btnVentaCruzadaCliente.setBorder(new SoftBevelBorder(BevelBorder.RAISED));
+		btnVentaCruzadaCliente.setFocusable(false);
+		btnVentaCruzadaCliente.setHorizontalTextPosition(SwingConstants.CENTER);
+		btnVentaCruzadaCliente.setVerticalTextPosition(SwingConstants.BOTTOM);
+		btnVentaCruzadaCliente.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				btmMostrarVentasCruzadasActionPerformed();
+			}
+		});
+		mnuToolBarMiddle.add(btnVentaCruzadaCliente);
+		
+		mnuToolBarMiddle.add(separador9);
 		btnResultadoMarca.setText("Resultado Marca");
 		btnResultadoMarca.setBorder(new SoftBevelBorder(BevelBorder.RAISED));
 		btnResultadoMarca.setFocusable(false);
@@ -1337,7 +1367,6 @@ public abstract class IPedidos extends javax.swing.JInternalFrame implements Foc
 				try {
 					valorNeto = this.pedido.getHeader().getStrValorNeto();
 				} catch (Exception e) {
-					// TODO: handle exception
 					valorNeto = txtValorNeto.getText();
 					if (valorNeto.equalsIgnoreCase("")) {
 						valorNeto = "0.0";
@@ -1375,7 +1404,6 @@ public abstract class IPedidos extends javax.swing.JInternalFrame implements Foc
 		try {
 			valorNeto = this.pedido.getHeader().getStrValorNeto();
 		} catch (Exception e) {
-			// TODO: handle exception
 			valorNeto = txtValorNeto.getText();
 			if (valorNeto.equalsIgnoreCase("")) {
 				valorNeto = "0.0";
@@ -1389,7 +1417,6 @@ public abstract class IPedidos extends javax.swing.JInternalFrame implements Foc
 		try {
 			presMensual = Double.parseDouble(dPresupuesto);
 		} catch (Exception e) {
-			// TODO: handle exception
 			presMensual = 0.0;
 		}
 		
@@ -1397,7 +1424,6 @@ public abstract class IPedidos extends javax.swing.JInternalFrame implements Foc
 		try {
 			dAcumreal = Double.parseDouble(dAcumaloReal);
 		} catch (Exception e) {
-			// TODO: handle exception
 			dAcumreal = 0.0;
 		}
 		
@@ -1474,6 +1500,23 @@ public abstract class IPedidos extends javax.swing.JInternalFrame implements Foc
 			JDialog dialog = optionpane.createDialog("Proximas Visitas");
 			Point point = new Point(evt.getComponent().getLocationOnScreen().x+evt.getX(),evt.getComponent().getLocationOnScreen().y+evt.getY());
 			dialog.setLocation(point);
+			dialog.setVisible(true);
+		} catch (Exception e) {
+			Mensaje.mostrarError(e.getMessage());
+			Util.mostrarExcepcion(e);
+		}
+	}
+	//TODO cambiar
+	protected void btmMostrarVentasCruzadasActionPerformed() {
+		try {
+			Object[][] rows = getVentaCruzadaCategoria(codigoCliente);
+			Object[] cols = {
+			    "Categoria","Venta/Real","Oportunidad","Cump"
+			};
+			JTable table = new JTable(rows, cols);
+			JOptionPane optionpane = new JOptionPane(new JScrollPane(table),JOptionPane.PLAIN_MESSAGE,
+					JOptionPane.DEFAULT_OPTION,null,null,null);
+			JDialog dialog = optionpane.createDialog("Venta Cruzada Por Categoria");
 			dialog.setVisible(true);
 		} catch (Exception e) {
 			Mensaje.mostrarError(e.getMessage());
@@ -1752,7 +1795,7 @@ public abstract class IPedidos extends javax.swing.JInternalFrame implements Foc
 	}
 
 	protected void btnConsultaCapturaDinamicaActionPerformed(java.awt.event.ActionEvent evt) {
-		consultaDinamica(false);
+		consultaDinamica(0);
 	}
 
 	protected void btnGuiaVentasActionPerformed(java.awt.event.ActionEvent evt) {
@@ -2838,7 +2881,6 @@ public abstract class IPedidos extends javax.swing.JInternalFrame implements Foc
 		HashMap<String, String> hm = new HashMap<String, String>();
 		hm.put("AG", Util.completarCeros(10, codigoCliente));
 		hm.put("WE", Util.completarCeros(10, txtDestinatario.getText()));
-		//TODO
 		hm.put("ZS", Util.obtenerCodigoSupervisor());
 		hm.put("ZV", Util.completarCeros(10, usuario.getStrCodigo()));
 		partners.setHm(hm);
@@ -3517,6 +3559,7 @@ public abstract class IPedidos extends javax.swing.JInternalFrame implements Foc
 							b2.setStrCliente(codCliente);
 							b2.setStrGrupoCliente("" + Integer.parseInt(beanCli.getStrCodigoTipologia()));
 							b2.setStrCanal(beanCli.getStrCodCanalDist());
+							b2.setStrMATNR(i.getCodigo());
 							List<BeanCondicionComercial2> condiciones2 = sqlMat.listarCondicion2(b2);
 							Double dblDscto = new Double("0");
 							BeanCondicionComercial2 condicion2 = null;
@@ -4889,7 +4932,7 @@ public abstract class IPedidos extends javax.swing.JInternalFrame implements Foc
 		return cliente;
 	}
 
-	protected void consultaDinamica(final boolean mn) {
+	protected void consultaDinamica(final int mn) {
 		final DLocker bloqueador = new DLocker();
 		Thread hilo = new Thread() {
 			public void run() {
@@ -4960,6 +5003,24 @@ public abstract class IPedidos extends javax.swing.JInternalFrame implements Foc
 		}
 		
 	}
+	
+	public Object[][] getVentaCruzadaCategoria(String strCodigoCliente){
+		Object[][] rows = null;
+		List<BeanVentaCruzada> colVentCrz = new ArrayList();
+		SqlMaterialImpl impl = new SqlMaterialImpl();
+		colVentCrz = impl.getListVentaCruzadaCliente(strCodigoCliente);
+		rows = new Object[colVentCrz.size()][4];
+		int i=0;
+		for(BeanVentaCruzada vtacrz: colVentCrz){
+			rows[i][0] = vtacrz.getStrCategoria();
+			rows[i][1] = vtacrz.getDblVentaReal();
+			rows[i][2] = vtacrz.getDblOportunidad();
+			rows[i][3] = vtacrz.getDblCumplimiento();
+			i++;
+		}
+		return rows;
+	}
+	
 	public String verificarVisitas(String strMensaje, String codigoCliente){
 		BeanDato usuario = Promesa.datose.get(0);
 		BeanAgenda ba = new BeanAgenda();
@@ -5416,6 +5477,8 @@ public abstract class IPedidos extends javax.swing.JInternalFrame implements Foc
 	protected javax.swing.JButton btnSimularTodo;
 	protected javax.swing.JButton btnImprimirComprobante;
 	protected javax.swing.JButton btnMaterialNuevo;
+	protected javax.swing.JButton btnVentaCruzada;
+	protected javax.swing.JButton btnVentaCruzadaCliente;
 	protected javax.swing.JButton btnResultadoMarca;
 	protected javax.swing.JPanel jPanel9;
 	protected javax.swing.JPanel panelClaseRiesgo;
@@ -5461,6 +5524,8 @@ public abstract class IPedidos extends javax.swing.JInternalFrame implements Foc
 	protected javax.swing.JToolBar.Separator separador5;
 	protected javax.swing.JToolBar.Separator separador6;
 	protected javax.swing.JToolBar.Separator separador7;
+	protected javax.swing.JToolBar.Separator separador8;
+	protected javax.swing.JToolBar.Separator separador9;
 	protected javax.swing.JTable tblPedidos;
 	protected javax.swing.JTextField txtBloqEntrega;
 	protected javax.swing.JTextField txtClasRiesgo;
