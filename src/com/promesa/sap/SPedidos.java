@@ -1553,7 +1553,7 @@ public class SPedidos {
 					bm.setDblAcumulado(Double.parseDouble(values[3]));
 					bm.setDblPromedio(Double.parseDouble(values[4]));
 					bm.setStrCodCliente("" + Integer.parseInt(values[1]));
-					bm.setStrVentaReal(""+Double.parseDouble(values[4]));
+					bm.setStrVentaReal(""+Double.parseDouble(values[5]));
 					listaTemp.add(bm);
 				}
 				Promesa.getInstance().mostrarAvisoSincronizacion("");

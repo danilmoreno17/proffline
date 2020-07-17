@@ -1148,13 +1148,13 @@ public class SqlMaterialImpl implements SqlMaterial {
 			String tipologia = listt.get(0).get(i).getStrCodCliente();
 			String cadenaSQL = 	" INSERT INTO PROFFLINE_TB_MATERIAL_TOP_TIPOLOGIA(MATNR, STOCK, S_U, SHORT_TEXT, TEXT_LINE, TARGET_QTY, " +
 								"PRICE_1, PRICE_2, PRICE_3, PRICE_4, PRDHA, HER, NORMT, ZZORDCO, CELL_DESIGN, MTART, TYPEMAT, " +
-								"GRUPO_COMPRA, ST_1, VENTAS_ACUMULADO, VENTAS_PROMEDIO, CLIENTE, VENTA_REAL) VALUES ('" + m.getIdMaterial() + "', '" +
+								"GRUPO_COMPRA, ST_1, VENTAS_ACUMULADO, VENTAS_PROMEDIO, CLIENTE) VALUES ('" + m.getIdMaterial() + "', '" +
 								m.getStock() + "','" + m.getUn() + "','" + m.getDescripcion() + "','" + m.getText_line() + "','" +
 								m.getTarget_qty() + "','" + m.getPrice_1() + "','" + m.getPrice_2() + "','" + m.getPrice_3() + "','" +
 								m.getPrice_4() + "','" + m.getPrdha() + "','" + m.getTipoMaterial() + "','" + m.getNormt() + "','" +
 								m.getZzordco() + "','" + m.getCell_design() + "','" + m.getMtart() + "','" + m.getTypeMat() + "','" +
 								m.getGrupo_compra() + "','" + m.getSt_1() + "','" + m.getDblAcumulado() + "','" + m.getDblPromedio() + "','" +
-								tipologia + "','"+m.getStrVentaReal()+"');";
+								tipologia + "');";
 			i++;
 			listaSQL.add(cadenaSQL);
 		}

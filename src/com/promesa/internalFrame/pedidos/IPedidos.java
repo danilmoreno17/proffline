@@ -5009,15 +5009,28 @@ public abstract class IPedidos extends javax.swing.JInternalFrame implements Foc
 		List<BeanVentaCruzada> colVentCrz = new ArrayList();
 		SqlMaterialImpl impl = new SqlMaterialImpl();
 		colVentCrz = impl.getListVentaCruzadaCliente(strCodigoCliente);
-		rows = new Object[colVentCrz.size()][4];
+		rows = new Object[colVentCrz.size()+1][4];
 		int i=0;
+		Double dblTotalVentaReal = 0d;
+		int intTotalOportunidad = 0;
+		int intTotalCumpl = 0;
 		for(BeanVentaCruzada vtacrz: colVentCrz){
 			rows[i][0] = vtacrz.getStrCategoria();
 			rows[i][1] = vtacrz.getDblVentaReal();
+			dblTotalVentaReal += vtacrz.getDblVentaReal();
 			rows[i][2] = vtacrz.getDblOportunidad();
-			rows[i][3] = vtacrz.getDblCumplimiento();
+			intTotalOportunidad += vtacrz.getDblOportunidad()>0?1:0;
+			Double dblCumpl = (vtacrz.getDblVentaReal()/vtacrz.getDblObjetivo())*100;
+			rows[i][3] = String.format("%.2f",dblCumpl)+"%";
+			intTotalCumpl += dblCumpl>0?1:0;
 			i++;
 		}
+		
+		rows[i][0] = "TOTAL";
+		rows[i][1] = dblTotalVentaReal;
+		rows[i][2] = intTotalOportunidad;
+		Double dblPromCumpl = (double) ((intTotalCumpl/i)*100);
+		rows[i][3] = String.format("%.2f",dblPromCumpl)+"%";;
 		return rows;
 	}
 	

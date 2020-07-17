@@ -47,7 +47,7 @@ public class IProforma extends IPedidos {
 		BeanCliente cl = new BeanCliente();
 		SqlCliente getCliente = new SqlClienteImpl();
 		cl = getCliente.obtenerCliente(codigoCliente);
-		setTitle("Proforma " + codigoCliente + "-" + nombreCliente + "-" + cl.getStrCanal());
+		setTitle("Proforma " + codigoCliente + "-" + nombreCliente + "- Canal:" + cl.getStrCanal());
 		tituloImpresion = "Proforma";
 		txtBloqEntrega.setEditable(true);
 		btnImprimirComprobante.setVisible(false);
