@@ -81,6 +81,7 @@ import com.promesa.main.Promesa;
 import com.promesa.pedidos.bean.BeanAgenda;
 import com.promesa.pedidos.sql.SqlAgenda;
 import com.promesa.pedidos.sql.impl.SqlAgendaImpl;
+import com.promesa.pedidos.sql.impl.SqlPedidoImpl;
 import com.promesa.planificacion.bean.BeanCliente;
 import com.promesa.planificacion.sql.impl.SqlClienteImpl;
 import com.promesa.sap.SCobranzas;
@@ -109,6 +110,7 @@ public class IRegistroPagoCliente extends javax.swing.JInternalFrame implements 
 	private static final int VENCIMIENTO = 6;
 	private static final int REFERENCIA = 3;
 	private static final int POSICION = 5;
+	private boolean cobranzaAuto = false;
 	
 	private String strDispositivoImpresora;
 
@@ -116,6 +118,13 @@ public class IRegistroPagoCliente extends javax.swing.JInternalFrame implements 
 		this.codigoCliente = ba.getStrCodigoCliente();
 		this.ba =ba;
 		initComponents();
+		cobranzaAutomatico();
+		if(cobranzaAuto){
+			btnSeleccionarTodo.setEnabled(false);
+			btnDeseleccionar.setEnabled(false);
+			btnActivar.setEnabled(false);
+			btnDesactivar.setEnabled(false);
+		}
 		modeloPagosRecibidos = new ModeloPagosRecibidos();
 		tblPagoParc.setModel(modeloPagosRecibidos);
 		((DefaultTableCellRenderer) tblPagoParc.getTableHeader().getDefaultRenderer()).setHorizontalAlignment(JLabel.CENTER);
@@ -162,6 +171,8 @@ public class IRegistroPagoCliente extends javax.swing.JInternalFrame implements 
 		agregarFormaPago();
 		this.nombreCompletoCliente = nombreCompletoCliente;
 		strDispositivoImpresora = Util.verificarImpresora();
+		
+		
 	}
 
 	private void agregarFormaPago() {
@@ -1104,6 +1115,16 @@ public class IRegistroPagoCliente extends javax.swing.JInternalFrame implements 
 			Util.mostrarExcepcion(e);
 		}
 	}
+	
+	private void cobranzaAutomatico() {
+		// TODO Auto-generated method stub
+		SqlPedidoImpl sqlPedidoImpl = new SqlPedidoImpl();
+		String strBloque = sqlPedidoImpl.obtenerBloqueoPedido("COBRANZA_AUTO");
+		if(strBloque.equals("X")){
+			cobranzaAuto = true;
+		}
+	}
+	
 	private void grabarRegistroPagoClienteOnline() {
 		final DLocker bloqueador = new DLocker();
 		Thread hilo = new Thread() {
@@ -1121,31 +1142,58 @@ public class IRegistroPagoCliente extends javax.swing.JInternalFrame implements 
 					}
 					// Obtenemos los pagos parciales
 					List<PagoParcial> pagosParciales = new ArrayList<PagoParcial>();
-					for (PagoParcial pp : modeloPagosRecibidos.obtenerListaPagoParcial()) {
-						if (!pp.isHijo()&& pp.getImportePago() > 0d && pp.isActivo()) {
-							pagosParciales.add(pp);
+					if(!cobranzaAuto){
+						for (PagoParcial pp : modeloPagosRecibidos.obtenerListaPagoParcial()) {
+							if (!pp.isHijo()&& pp.getImportePago() > 0d && pp.isActivo()) {
+								pagosParciales.add(pp);
+							}
 						}
 					}
 					if (validaIngresoDatosPagosRecibidos(pagosRecibidos, pagosParciales)) {
 						Promesa promesa = Promesa.getInstance();
 						double sinAsignar = Double.parseDouble(txtSinAsignar.getText());
-						if (sinAsignar >= 1d) {
-							String str = "¿Desea grabar el pago, se realizará un anticipo automático por ";
-							String msg = str+ txtSinAsignar.getText()+" ... confirmar?";
-							
-							int tipo = JOptionPane.showConfirmDialog(promesa, msg, "Confirmación", JOptionPane.YES_NO_OPTION);
-							if (tipo == JOptionPane.OK_OPTION) {
+						if(!cobranzaAuto){
+							if (sinAsignar >= 1d) {
+								String str = "¿Desea grabar el pago, se realizará un anticipo automático por ";
+								String msg = str+ txtSinAsignar.getText()+" ... confirmar?";
+								
+								int tipo = JOptionPane.showConfirmDialog(promesa, msg, "Confirmación", JOptionPane.YES_NO_OPTION);
+								if (tipo == JOptionPane.OK_OPTION) {
+									llenarClaseImpresionONLine(pagosRecibidos, pagosParciales);
+								}
+							} else if (sinAsignar > 0d && sinAsignar < 1d) {
 								llenarClaseImpresionONLine(pagosRecibidos, pagosParciales);
+							} else if (sinAsignar == 0d) {
+								llenarClaseImpresionONLine(pagosRecibidos, pagosParciales);
+							} else if (sinAsignar > -1d && sinAsignar < 0d) {
+								llenarClaseImpresionONLine(pagosRecibidos, pagosParciales);
+							} else if (sinAsignar <= -1d) {
+								String msg = "El Importe Sin Asignar debe ser mayor a -1.0";
+								JOptionPane.showMessageDialog(promesa, msg, "Error", JOptionPane.ERROR_MESSAGE);
+							}							
+						}else{
+							double sumTotal = 0d;
+							for (PagoParcial pp : modeloPagosRecibidos.obtenerListaPagoParcial()) {
+								if (!pp.isHijo()&& pp.getImportePago() > 0d) {
+									sumTotal += pp.getImportePago();
+								}
 							}
-						} else if (sinAsignar > 0d && sinAsignar < 1d) {
-							llenarClaseImpresionONLine(pagosRecibidos, pagosParciales);
-						} else if (sinAsignar == 0d) {
-							llenarClaseImpresionONLine(pagosRecibidos, pagosParciales);
-						} else if (sinAsignar > -1d && sinAsignar < 0d) {
-							llenarClaseImpresionONLine(pagosRecibidos, pagosParciales);
-						} else if (sinAsignar <= -1d) {
-							String msg = "El Importe Sin Asignar debe ser mayor a -1.0";
-							JOptionPane.showMessageDialog(promesa, msg, "Error", JOptionPane.ERROR_MESSAGE);
+							if (sinAsignar > sumTotal && sumTotal != 0d) {
+								String str = "¿Desea grabar el pago, se realizará un anticipo automático por ";
+								String msg = str+ (Double.parseDouble(txtSinAsignar.getText())-sumTotal)+" ... confirmar?";
+								
+								int tipo = JOptionPane.showConfirmDialog(promesa, msg, "Confirmación", JOptionPane.YES_NO_OPTION);
+								if (tipo == JOptionPane.OK_OPTION) {
+									llenarClaseImpresionONLine(pagosRecibidos, pagosParciales);
+								}
+							} else if (sinAsignar == sumTotal && sumTotal != 0d) {
+								llenarClaseImpresionONLine(pagosRecibidos, pagosParciales);
+							} else if (sinAsignar < sumTotal) {
+								llenarClaseImpresionONLine(pagosRecibidos, pagosParciales);
+							} else if (sumTotal != 0d) {
+								String msg = "Cliente sin cartera pendiente, favor registrar como anticipo.";
+								JOptionPane.showMessageDialog(promesa, msg, "Error", JOptionPane.ERROR_MESSAGE);
+							}
 						}
 					}
 				} catch (Exception e) {
@@ -1889,22 +1937,26 @@ public class IRegistroPagoCliente extends javax.swing.JInternalFrame implements 
 							mensaje.append(ordenSecuencia + ".- Una retención debe estar asociada a " + "una factura activa.\n");
 							resultado = false;
 						} else {
-							boolean bandera = false;
-							for (PagoParcial pp : pagosParcialesActivos) {
-								if (pp.getReferencia().trim().equals(pr.getNumeroFactura() .trim())) {
-									bandera = true;
-									break;
-								}
-							}
+							
+					
 							String strFecha1 = pr.getFechaDocumento();
 							Date fecha1 = Util.convierteCadenaYYYYMMDDAFecha(strFecha1);
 							if(!Util.fechaMaximoTresMeses(fecha1)){
 								mensaje.append(ordenSecuencia + ".- La fecha de documento debe ser superior a "+Util.fechaTresMesesAntes(fecha1)+".\n");
 								resultado = false;
 							}
-							if (!bandera) {
-								mensaje.append(ordenSecuencia + ".- Una retención debe estar asociada a " + "una factura válida.\n");
-								resultado = false;
+							if(!cobranzaAuto){
+								boolean bandera = false;
+								for (PagoParcial pp : pagosParcialesActivos) {
+									if (pp.getReferencia().trim().equals(pr.getNumeroFactura() .trim())) {
+										bandera = true;
+										break;
+									}
+								}
+								if (!bandera) {
+									mensaje.append(ordenSecuencia + ".- Una retención debe estar asociada a " + "una factura válida.\n");
+									resultado = false;
+								}								
 							}
 						}
 						if (("").equals(pr.getReferencia().trim())) {
@@ -2022,7 +2074,7 @@ public class IRegistroPagoCliente extends javax.swing.JInternalFrame implements 
 				mensaje.append("Las retenciones sólo deben estar asociadas a " + "un número de Referencia.\n");
 				resultado = false;
 			}
-			if (pagosParcialesActivos.size() == 0) {
+			if (pagosParcialesActivos.size() == 0 && !cobranzaAuto) {
 				mensaje.append("Debe activar al menos una factura.\n");
 				resultado = false;
 			}

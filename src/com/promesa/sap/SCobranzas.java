@@ -31,10 +31,12 @@ import com.promesa.cobranzas.bean.ValorPorVencer;
 import com.promesa.cobranzas.dao.bean.HojaMaestraCredito;
 import com.promesa.main.Promesa;
 import com.promesa.pedidos.bean.BeanSecuencia;
+import com.promesa.pedidos.sql.impl.SqlPedidoImpl;
 import com.promesa.util.Conexiones;
 import com.promesa.util.Util;
 
 //import net.sf.jasperreports.components.list.ListDesignConverter;
+
 
 import util.ConexionSAP;
 
@@ -860,7 +862,7 @@ public class SCobranzas {
 //				System.out.println("bankn: " + ac.getNroCtaBcoCliente());
 				String descrip;
 				if (formaPago.equals("VY")) {
-					descrip = ac.getDescripcionBancoCliente();
+					descrip = ac.getDescripcionBancoPromesa();
 					// Marcelo Moyano 06/03/2013 - 14:57
 					con.IngresarDatoTabla(descrip, "BANK", 1);
 //					System.out.println("bank: " + descrip);
@@ -1325,6 +1327,8 @@ public class SCobranzas {
 		Object arregloRegistroPagoCliente[] = new Object[2];
 		List<String> detalles = new ArrayList<String>();
 		List<String> mensajes = new ArrayList<String>();
+		SqlPedidoImpl sqlPedidoImpl = new SqlPedidoImpl();
+		String strBloque = sqlPedidoImpl.obtenerBloqueoPedido("COBRANZA_AUTO");
 		try {
 			ConexionSAP con = Conexiones.getConexionSAP();
 			if (con != null) {
@@ -1418,84 +1422,87 @@ public class SCobranzas {
 					con.IngresarDatoTabla((i + 1) + "", "POSITION", i + 1);
 				}
 				con.CreaTabla("IS_OPEN_ITEM_D");
-				for (int i = 0; i < pagosParciales.size(); i++) {
-					PagoParcial pp = pagosParciales.get(i);
-					String nroDoc;
-					nroDoc = pp.getNumeroDocumento();
-					con.IngresarDatoTabla(nroDoc, "DOC_NO", i + 1);
-
-					String pstng;
-					pstng = pp.getPstngDate();
-					Date date;
-					date = Util.convierteCadenaDDMMYYYYAFecha(pstng);
-					String pstngDate;
-					pstngDate = Util.convierteFechaAFormatoYYYYMMdd(date);
-					con.IngresarDatoTabla(pstngDate, "PSTNG_DATE", i + 1);
-
-					String doc = pp.getDocDate();
-					Date dateDocDate = Util.convierteCadenaDDMMYYYYAFecha(doc);
-					String docDate;
-					docDate = Util.convierteFechaAFormatoYYYYMMdd(dateDocDate);
-					con.IngresarDatoTabla(docDate, "DOC_DATE", i + 1);
-
-					String entry = pp.getEntryDate();
-					Date dateEntry = Util.convierteCadenaDDMMYYYYAFecha(entry);
-					String entryDate;
-					entryDate = Util.convierteFechaAFormatoYYYYMMdd(dateEntry);
-					con.IngresarDatoTabla(entryDate, "ENTRY_DATE", i + 1);
-
-					String Venci = pp.getVencimiento();
-					Date expiDate;
-					expiDate = Util.convierteCadenaDDMMYYYYAFecha(Venci);
-					String expiration;
-					expiration = Util.convierteFechaAFormatoYYYYMMdd(expiDate);
-					con.IngresarDatoTabla(expiration, "EXPIRATION_DATE", i + 1);
-
-					con.IngresarDatoTabla(pp.getCurrency(), "CURRENCY", i + 1);
-
-					String importePagoTotal;
-					importePagoTotal = "" + pp.getImportePagoTotal();
-					con.IngresarDatoTabla(importePagoTotal, "AMT_DOCCUR", i + 1);
-					con.IngresarDatoTabla(pp.getRefOrgUn(), "REF_ORG_UN", i + 1);
-
-					String ref = pp.getReferencia();
-					con.IngresarDatoTabla(ref, "REF_DOC_NO", i + 1);
-					String claseDoc;
-					claseDoc = pp.getClaseDocumento();
-					con.IngresarDatoTabla(claseDoc, "DOC_TYPE", i + 1);
-					con.IngresarDatoTabla(pp.getPosicion(), "ITEM_NUM", i + 1);
-					con.IngresarDatoTabla(pp.getPostKey(), "POST_KEY", i + 1);
-
-					String importePagoParcial = "" + pp.getImportePagoParcial();
-					con.IngresarDatoTabla(importePagoParcial, "PSPRT", i + 1);
-
-					String importePago = "" + pp.getImportePago();
-					con.IngresarDatoTabla(importePago, "PSZAH", i + 1);
-					con.IngresarDatoTabla(pp.getPsskt(), "PSSKT", i + 1);
-					con.IngresarDatoTabla(pp.getInvRef(), "INV_REF", i + 1);
-					con.IngresarDatoTabla(pp.getInvItem(), "INV_ITEM", i + 1);
-					con.IngresarDatoTabla(pp.getIsLeaf(), "IS_LEAF", i + 1);
-
-					String isExp = pp.getIsExpanded();
-					con.IngresarDatoTabla(isExp, "IS_EXPANDED", i + 1);
-
-					String isReadOnly = pp.getIsReadOnly();
-					con.IngresarDatoTabla(isReadOnly, "IS_READ_ONLY", i + 1);
-					con.IngresarDatoTabla(pp.getIndice(), "INDEX", i + 1);
-
-					String color = pp.getDisplayColor();
-					con.IngresarDatoTabla(color, "DISPLAY_COLOR", i + 1);
-					con.IngresarDatoTabla(pp.getFiscYear(), "FISC_YEAR", i + 1);
-
-					String fisPeriod = pp.getFisPeriod();
-					con.IngresarDatoTabla(fisPeriod, "FIS_PERIOD", i + 1);
-					con.IngresarDatoTabla(pp.getSgtxt(), "SGTXT", i + 1);
-
-					String isReadOnly2 = pp.getIsReadOnly2();
-					con.IngresarDatoTabla(isReadOnly2, "IS_READ_ONLY2", i + 1);
-					con.IngresarDatoTabla(pp.getDbCrInd(), "DB_CR_IND", i + 1);
-					con.IngresarDatoTabla(pp.getVerzn(), "VERZN", i + 1);
+				if(!strBloque.equals("X")){
+					for (int i = 0; i < pagosParciales.size(); i++) {
+						PagoParcial pp = pagosParciales.get(i);
+						String nroDoc;
+						nroDoc = pp.getNumeroDocumento();
+						con.IngresarDatoTabla(nroDoc, "DOC_NO", i + 1);
+	
+						String pstng;
+						pstng = pp.getPstngDate();
+						Date date;
+						date = Util.convierteCadenaDDMMYYYYAFecha(pstng);
+						String pstngDate;
+						pstngDate = Util.convierteFechaAFormatoYYYYMMdd(date);
+						con.IngresarDatoTabla(pstngDate, "PSTNG_DATE", i + 1);
+	
+						String doc = pp.getDocDate();
+						Date dateDocDate = Util.convierteCadenaDDMMYYYYAFecha(doc);
+						String docDate;
+						docDate = Util.convierteFechaAFormatoYYYYMMdd(dateDocDate);
+						con.IngresarDatoTabla(docDate, "DOC_DATE", i + 1);
+	
+						String entry = pp.getEntryDate();
+						Date dateEntry = Util.convierteCadenaDDMMYYYYAFecha(entry);
+						String entryDate;
+						entryDate = Util.convierteFechaAFormatoYYYYMMdd(dateEntry);
+						con.IngresarDatoTabla(entryDate, "ENTRY_DATE", i + 1);
+	
+						String Venci = pp.getVencimiento();
+						Date expiDate;
+						expiDate = Util.convierteCadenaDDMMYYYYAFecha(Venci);
+						String expiration;
+						expiration = Util.convierteFechaAFormatoYYYYMMdd(expiDate);
+						con.IngresarDatoTabla(expiration, "EXPIRATION_DATE", i + 1);
+	
+						con.IngresarDatoTabla(pp.getCurrency(), "CURRENCY", i + 1);
+	
+						String importePagoTotal;
+						importePagoTotal = "" + pp.getImportePagoTotal();
+						con.IngresarDatoTabla(importePagoTotal, "AMT_DOCCUR", i + 1);
+						con.IngresarDatoTabla(pp.getRefOrgUn(), "REF_ORG_UN", i + 1);
+	
+						String ref = pp.getReferencia();
+						con.IngresarDatoTabla(ref, "REF_DOC_NO", i + 1);
+						String claseDoc;
+						claseDoc = pp.getClaseDocumento();
+						con.IngresarDatoTabla(claseDoc, "DOC_TYPE", i + 1);
+						con.IngresarDatoTabla(pp.getPosicion(), "ITEM_NUM", i + 1);
+						con.IngresarDatoTabla(pp.getPostKey(), "POST_KEY", i + 1);
+	
+						String importePagoParcial = "" + pp.getImportePagoParcial();
+						con.IngresarDatoTabla(importePagoParcial, "PSPRT", i + 1);
+	
+						String importePago = "" + pp.getImportePago();
+						con.IngresarDatoTabla(importePago, "PSZAH", i + 1);
+						con.IngresarDatoTabla(pp.getPsskt(), "PSSKT", i + 1);
+						con.IngresarDatoTabla(pp.getInvRef(), "INV_REF", i + 1);
+						con.IngresarDatoTabla(pp.getInvItem(), "INV_ITEM", i + 1);
+						con.IngresarDatoTabla(pp.getIsLeaf(), "IS_LEAF", i + 1);
+	
+						String isExp = pp.getIsExpanded();
+						con.IngresarDatoTabla(isExp, "IS_EXPANDED", i + 1);
+	
+						String isReadOnly = pp.getIsReadOnly();
+						con.IngresarDatoTabla(isReadOnly, "IS_READ_ONLY", i + 1);
+						con.IngresarDatoTabla(pp.getIndice(), "INDEX", i + 1);
+	
+						String color = pp.getDisplayColor();
+						con.IngresarDatoTabla(color, "DISPLAY_COLOR", i + 1);
+						con.IngresarDatoTabla(pp.getFiscYear(), "FISC_YEAR", i + 1);
+	
+						String fisPeriod = pp.getFisPeriod();
+						con.IngresarDatoTabla(fisPeriod, "FIS_PERIOD", i + 1);
+						con.IngresarDatoTabla(pp.getSgtxt(), "SGTXT", i + 1);
+	
+						String isReadOnly2 = pp.getIsReadOnly2();
+						con.IngresarDatoTabla(isReadOnly2, "IS_READ_ONLY2", i + 1);
+						con.IngresarDatoTabla(pp.getDbCrInd(), "DB_CR_IND", i + 1);
+						con.IngresarDatoTabla(pp.getVerzn(), "VERZN", i + 1);
+					}
 				}
+				
 				con.EjecutarRFC();
 				con.CreaTabla("IS_PAYMENT_DETAIL");
 				detalles = con.ObtenerDatosTabla();

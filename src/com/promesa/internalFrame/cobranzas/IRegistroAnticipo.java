@@ -988,11 +988,14 @@ public class IRegistroAnticipo extends javax.swing.JInternalFrame {
 					}
 				} else if (("VY").equals(formPg.getIdFormaPago())) {
 					// cheque a la vista
+					BancoPromesa bnkPrm = (BancoPromesa) cmbBancoPromesa
+							.getSelectedItem();
+					String idBnkPromesa = bnkPrm.getIdBancoPromesa();
 					String importe = txtImporte.getText().trim();
 					String NroCtaBcoCli = txtNroCtaBcoCliente.getText().trim();
 					String referencia = txtReferencia.getText();
 					boolean flagNroCuentCli = validarNumeroDeCuentaCliente(codigoCliente, NroCtaBcoCli);
-					if (!importe.equals("")&& !NroCtaBcoCli.equals("") && flagNroCuentCli
+					if (!importe.equals("")&& !idBnkPromesa.equals("") && !NroCtaBcoCli.equals("") && flagNroCuentCli
 							&& !("").equals(idBancoCliente) && !referencia.equals("")) {
 						AnticipoCliente ac = new AnticipoCliente();
 						ac.setCodigoCliente(codigoCliente);
@@ -1003,6 +1006,9 @@ public class IRegistroAnticipo extends javax.swing.JInternalFrame {
 						ac.setNroCtaBcoCliente(txtNroCtaBcoCliente.getText());
 						ac.setDescripcionBancoCliente(txtBancoCliente.getText());
 						ac.setIdBancoPromesa("");
+						
+						descripcionBanco = bnkPrm.getDescripcionBancoPromesa();
+						ac.setDescripcionBancoPromesa(descripcionBanco);
 						
 //						String fDeposito = dateFechaDeposito.getDate().toString();
 ////					String fCreacion = Util.convierteFechaAFormatoYYYYMMdd(fDeposito);
