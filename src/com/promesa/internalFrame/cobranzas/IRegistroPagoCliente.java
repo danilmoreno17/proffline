@@ -1995,6 +1995,10 @@ public class IRegistroPagoCliente extends javax.swing.JInternalFrame implements 
 							mensaje.append(ordenSecuencia + ".- Un cheque a la vista requiere un número de " + "cuenta de banco válido del cliente.\n");
 							resultado = false;
 						}
+						if (("").equals(pr.getBancoPromesa().getIdBancoPromesa().trim())) {
+							mensaje.append(ordenSecuencia + ".- Un número de cuenta de banco " + "de promesa asociado a un cheque a la vista " + "no puede ser nulo.\n");
+							resultado = false;
+						}
 					} else if (("VZ").equals(idFormaPago)) {
 						if (pr.getImporte() == 0d) { // Efectivo
 							mensaje.append(ordenSecuencia + ".- El importe asociado a un pago en efectivo no puede " + "ser menor o igual a 0.\n");

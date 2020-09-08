@@ -171,7 +171,7 @@ KeyListener {
 			lblLogo.setIcon(new ImageIcon(ulrLogo));
 			lblLogo.setForeground(Color.blue.darker().darker());
 			lblLogo.setFont(new java.awt.Font("Tahoma", Font.BOLD, 16)); // NOI18N
-			lblLogo.setText("RC 2.7");
+			lblLogo.setText("RC 3.0");
 			lblLogo.setVerticalAlignment(javax.swing.SwingConstants.CENTER);
 			lblLogo.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
 		}
@@ -351,7 +351,7 @@ KeyListener {
 													fin = fin - inicio;
 													
 													// ----- Importante no comentar ----------
-													for (int i = 1; i < 33; i++) {
+													for (int i = 1; i <= 34; i++) {
 														if (i != 3 && i != 12 && i!=29 && i!=30 && i!=31 && i!=32) {
 														//if (i != 12) {
 															activaSincronizacion(i, fin);
@@ -576,7 +576,11 @@ KeyListener {
 			cantidadRegistros = sqlSincronizacionImpl.filasTabla("PROFFLINE_TB_PRESUPUESTO");;
 			break;
 		case 33:// Materiales Nuevos
-			cantidadRegistros = sqlSincronizacionImpl.filasTabla("PROFFLINE_TB_MATERIALES_NUEVOS");;
+			cantidadRegistros = sqlSincronizacionImpl.filasTabla("PROFFLINE_TB_MATERIAL_NUEVO");;
+			break;
+		case 34:// Materiales Nuevos
+			cantidadRegistros = sqlSincronizacionImpl.filasTabla("PROFFLINE_TB_MATERIAL_VENTA_CRUZADA");
+			cantidadRegistros += sqlSincronizacionImpl.filasTabla("PROFFLINE_TB_VENTA_CRUZADA");
 			break;
 		default:// No se ha seleccionado ninguna tabla
 			cantidadRegistros = 0;

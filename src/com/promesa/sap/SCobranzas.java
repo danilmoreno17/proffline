@@ -634,6 +634,11 @@ public class SCobranzas {
 							bp.setIdBancoPromesa(valores[2].trim());
 							bp.setDescripcionBancoPromesa(valores[4].trim());
 							bp.setTipoRecaudo(valores[5].trim());
+						} else if (valores.length == 7) {
+							bp.setIdBancoPromesa(valores[2].trim());
+							bp.setDescripcionBancoPromesa(valores[4].trim());
+							bp.setTipoRecaudo(valores[5].trim());
+							bp.setDepApps(valores[6].trim());
 						} else {
 							bp.setIdBancoPromesa(valores[2].trim());
 							bp.setDescripcionBancoPromesa(valores[4].trim());
@@ -1356,8 +1361,7 @@ public class SCobranzas {
 					con.IngresarDatoTabla(nroFact, "XREF2_HD", i + 1);
 					String nroCta = pr.getBancoCliente().getNroCtaBcoCliente();
 					con.IngresarDatoTabla(nroCta, "BANKN", i + 1);
-					if (("VC").equals(idFormaPago)
-							|| ("VY").equals(idFormaPago)) {
+					if (("VC").equals(idFormaPago)) {
 						BancoCliente bc = pr.getBancoCliente();
 						String descBcoCli = bc.getDescripcionBancoCliente();
 						con.IngresarDatoTabla(descBcoCli, "BANK", i + 1);
@@ -1369,7 +1373,12 @@ public class SCobranzas {
 						BancoPromesa bp = pr.getBancoPromesa();
 						String descripBcoPro = bp.getDescripcionBancoPromesa();
 						con.IngresarDatoTabla(descripBcoPro, "BANK", i + 1);// Recaudo
-					} else {
+					}else if (("VY").equals(idFormaPago)) {
+						BancoPromesa bp = pr.getBancoPromesa();
+						//con.IngresarDatoTabla(bp.getIdBancoPromesa(), "BANKN", i + 1);
+						String descripBcoPro = bp.getDescripcionBancoPromesa();
+						con.IngresarDatoTabla(descripBcoPro, "BANK", i + 1);// Recaudo
+					}else {
 						// Otros
 						con.IngresarDatoTabla("", "BANK", i + 1);
 					}

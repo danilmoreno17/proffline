@@ -43,6 +43,8 @@ import javax.swing.border.BevelBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
+
 import com.promesa.bean.BeanDato;
 import com.promesa.cobranzas.bean.AnticipoCliente;
 import com.promesa.cobranzas.bean.BancoCliente;
@@ -85,7 +87,7 @@ public class IRegistroAnticipo extends javax.swing.JInternalFrame {
 	private String strDispositivoImpresora;
 	private BeanAgenda ba;
 	private static int ERROR_MENSAJE = JOptionPane.ERROR_MESSAGE;
-
+	private SqlBancoPromesaImpl sqlBancoPromesaImpl;
 	/** Creates new form IRegistroAnticipo */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public IRegistroAnticipo(BeanAgenda ba, String codigoVendedor,
@@ -93,7 +95,7 @@ public class IRegistroAnticipo extends javax.swing.JInternalFrame {
 		initComponents();
 		this.ba =ba;
 		SqlFormaPagoAnticipoImpl sqlFormaPagoAnticipoImpl = new SqlFormaPagoAnticipoImpl();
-		SqlBancoPromesaImpl sqlBancoPromesaImpl = new SqlBancoPromesaImpl();
+		sqlBancoPromesaImpl = new SqlBancoPromesaImpl();
 		List<FormaPago> formasPagos = sqlFormaPagoAnticipoImpl.obtenerListaFormaPagoAnticipo();
 		cmbFormaPago.setModel(new DefaultComboBoxModel(formasPagos.toArray()));
 		List<BancoPromesa> bcoPromesas = sqlBancoPromesaImpl.obtenerListaBancoPromesa();
@@ -1488,6 +1490,9 @@ public class IRegistroAnticipo extends javax.swing.JInternalFrame {
 			lblImporte.setText(importe);
 			txtImporte.setEditable(true);
 			
+			List<BancoPromesa> bcoPromesas = sqlBancoPromesaImpl.obtenerListaBancoPromesa();
+			cmbBancoPromesa.setModel(new DefaultComboBoxModel(bcoPromesas.toArray()));
+			
 //			lblImporteIva.setVisible(false);
 //			txtImporteIva.setVisible(false);
 			txtObservaciones.setEnabled(true);
@@ -1506,6 +1511,9 @@ public class IRegistroAnticipo extends javax.swing.JInternalFrame {
 			String importe = "<html>Importe: <font color='red'>(*)</font></html>";
 			lblImporte.setText(importe);
 			txtImporte.setEditable(true);
+
+			List<BancoPromesa> bcoPromesas = sqlBancoPromesaImpl.obtenerListaBancoPromesaDepApps();
+			cmbBancoPromesa.setModel(new DefaultComboBoxModel(bcoPromesas.toArray()));
 			
 //			lblImporteIva.setVisible(false);
 //			txtImporteIva.setVisible(false);
@@ -1514,9 +1522,11 @@ public class IRegistroAnticipo extends javax.swing.JInternalFrame {
 			lblNroCtaBcoCliente.setText(nroCtaBcoCli);
 			txtNroCtaBcoCliente.setBackground(Color.white);
 			txtNroCtaBcoCliente.setEditable(true);
-			lblBcoPromesa.setText("Bco. PROMESA:");
-			cmbBancoPromesa.setEnabled(false);
-			dateFechaDeposito.setEnabled(false);
+			
+			String bcoPromesa = "<html>Bco. PROMESA: <font color='red'>(*)</font></html>";
+			lblBcoPromesa.setText(bcoPromesa);
+			cmbBancoPromesa.setEnabled(true);
+			dateFechaDeposito.setEnabled(true);
 			formaPago = "Cheque a la Vista";
 		} else if (("VZ").equals(idFormaPg)) { // Efectivo
 			lblReferencia.setText("Referencia:");

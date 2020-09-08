@@ -28,10 +28,11 @@ public class SqlBancoPromesaImpl {
 					+ bancoPromesa.getIdBancoPromesa()
 					+ "','" + bancoPromesa.getDescripcionBancoPromesa() + "');";
 			}else{
-				sql = "INSERT INTO PROFFLINE_TB_BANCO_PROMESA (idBancoPromesa, descripcionBancoPromesa, tipoRecaudo) VALUES ('"
+				sql = "INSERT INTO PROFFLINE_TB_BANCO_PROMESA (idBancoPromesa, descripcionBancoPromesa, tipoRecaudo, depApps) VALUES ('"
 					+ bancoPromesa.getIdBancoPromesa()
 					+ "','" + bancoPromesa.getDescripcionBancoPromesa() 
-					+ "','" + bancoPromesa.getTipoRecaudo() + "');";
+					+ "','" + bancoPromesa.getTipoRecaudo()
+					+ "','" + bancoPromesa.getDepApps() + "');";
 			}
 			listaBancoPromesa.add(sql);
 		}
@@ -109,6 +110,32 @@ public class SqlBancoPromesaImpl {
 					bancoPromesa.setIdBancoPromesa(res.get("idBancoPromesa").toString());
 					bancoPromesa.setDescripcionBancoPromesa(res.get("descripcionBancoPromesa").toString());
 					bancoPromesa.setTipoRecaudo(res.get("tipoRecaudo").toString());
+					listaBancoPromesa.add(bancoPromesa);
+				}
+			}
+		}
+		return listaBancoPromesa;
+	}
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public List<BancoPromesa> obtenerListaBancoPromesaDepApps(){
+		List<BancoPromesa> listaBancoPromesa = new ArrayList<BancoPromesa>();
+		column = new HashMap();
+		column.put("String:0", "idBancoPromesa");
+		column.put("String:1", "descripcionBancoPromesa");
+		column.put("String:2", "depApps");
+		ResultExecuteQuery resultExecuteQuery = null;
+		String sql = "SELECT * FROM PROFFLINE_TB_BANCO_PROMESA WHERE depApps = 'S' OR IDBANCOPROMESA = '';";
+		resultExecuteQuery = new ResultExecuteQuery(sql, column, Constante.BD_SYNC);
+		if(resultExecuteQuery != null){
+			mapResultado = resultExecuteQuery.getMap();
+			if(mapResultado.size() > 0){
+				for(int i = 0; i < mapResultado.size(); i++){
+					HashMap res = (HashMap) mapResultado.get(i);
+					BancoPromesa bancoPromesa = new BancoPromesa();
+					bancoPromesa.setIdBancoPromesa(res.get("idBancoPromesa").toString());
+					bancoPromesa.setDescripcionBancoPromesa(res.get("descripcionBancoPromesa").toString());
+					bancoPromesa.setDepApps(res.get("depApps").toString());
 					listaBancoPromesa.add(bancoPromesa);
 				}
 			}

@@ -546,8 +546,8 @@ public class PanelElementosPagosRecibidos extends javax.swing.JPanel {
 			txtImporte.setBackground(Color.white);
 			txtReferencia.setBackground(Color.white);
 			txtNroCtaBcoCliente.setBackground(Color.white);
-			cmbBancoPromesa.setEditable(false);
 			establecerColorDeFondoCalendario(dtcFechaVencimiento, Color.white);
+			cmbBancoPromesa.setEditable(false);		
 		} else if (("VP").equals(idFormaPago)) { // Pagaré
 			txtImporte.setEditable(true);
 			txtImporte.selectAll(); //	Marcelo Moyano
@@ -604,7 +604,15 @@ public class PanelElementosPagosRecibidos extends javax.swing.JPanel {
 			txtImporte.setBackground(Color.white);
 			txtReferencia.setBackground(Color.white);
 			txtNroCtaBcoCliente.setBackground(Color.white);
-			cmbBancoPromesa.setEditable(false);
+			listaBancoPromesa = sqlBancoPromesa.obtenerListaBancoPromesaDepApps();
+			cmbBancoPromesa.setModel(new DefaultComboBoxModel(listaBancoPromesa.toArray()));
+			AutoCompleteDecorator.decorate(cmbBancoPromesa);
+			cmbBancoPromesa.setRenderer(new MyComboBoxRenderer(listaBancoPromesa));// original 
+			cmbBancoPromesa.setEnabled(true);
+			cmbBancoPromesa.setBackground(Color.white);
+			txtImporte.setBackground(Color.white);
+			txtReferencia.setBackground(Color.white);
+			cmbBancoPromesa.setEditable(true);
 		} else if (("VZ").equals(idFormaPago)) { // Efectivo
 			txtImporte.setEditable(true);
 			txtImporte.selectAll(); //	Marcelo Moyano

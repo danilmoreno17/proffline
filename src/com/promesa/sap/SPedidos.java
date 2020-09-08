@@ -35,10 +35,12 @@ import com.promesa.pedidos.bean.BeanFactura;
 import com.promesa.pedidos.bean.BeanJerarquia;
 import com.promesa.pedidos.bean.BeanMarcaIndicador;
 import com.promesa.pedidos.bean.BeanMaterial;
+import com.promesa.pedidos.bean.BeanMercadeo;
 import com.promesa.pedidos.bean.BeanPedido;
 import com.promesa.pedidos.bean.BeanPedidoDetalle;
 import com.promesa.pedidos.bean.BeanPedidoHeader;
 import com.promesa.pedidos.bean.BeanPedidoPartners;
+import com.promesa.pedidos.bean.BeanPromocion;
 import com.promesa.pedidos.bean.BeanSede;
 import com.promesa.pedidos.bean.BeanTipologia;
 import com.promesa.pedidos.bean.BeanVentaCruzada;
@@ -61,6 +63,8 @@ public class SPedidos {
 	public static void main(String[] args) {
 		//listaMaterialesVentaCruzada("0000080323");
 		//listaCategoriaVentaCruzada("0000080323");
+		//listaMaterialesMercadeo("0000080323");
+		//listaMaterialesPromocion("0000080323");
 	}
 	@SuppressWarnings({ "rawtypes", "unused" })
 	public List<String[]> obtenerItemsSimulados(BeanPedido pedido) {
@@ -1511,7 +1515,9 @@ public class SPedidos {
 					bm.setIdMaterial("" + Integer.parseInt(values[2]));
 					bm.setDblAcumulado(Double.parseDouble(values[3]));
 					bm.setDblPromedio(Double.parseDouble(values[4]));
+					bm.setCantSug(Double.parseDouble(values[5]));
 					bm.setStrCodCliente("" + Integer.parseInt(values[1]));
+					
 					listaTemp.add(bm);
 				}
 				Promesa.getInstance().mostrarAvisoSincronizacion("");
@@ -1525,7 +1531,90 @@ public class SPedidos {
 			return null;
 		}
 	}
+	
+	@SuppressWarnings("rawtypes")
+	public List<BeanMercadeo> listaMaterialesMercadeo(String strCodVendedor) {
+		try {
+			List<BeanMercadeo> listaFinal = new ArrayList<BeanMercadeo>();
+			Promesa.getInstance().mostrarAvisoSincronizacion("SAP: Materiales de mercadeo");
+			ConexionSAP con = Conexiones.getConexionSAP();
+			if (con != null) {
+				Promesa.getInstance().mostrarAvisoSincronizacion("SAP: Materiales de mercadeo");
+				con.RegistrarRFC("ZSD_RFC_GEN_FOCO_MERC");
+				con.EjecutarRFC();
+				con.CreaTabla("ET_MATERIAL");
+				List ur1 = con.ObtenerDatosTabla();
+				con.DesconectarSAP();
+				String[] values = null;
+				BeanMercadeo bm = null;
+				for (int i = 0; i < ur1.size(); i++) {
+					Promesa.getInstance().mostrarAvisoSincronizacion("SAP: Materiales de mercadeo");
+					String cadena = String.valueOf(ur1.get(i));
+					values = cadena.split("¬");
+					bm = new BeanMercadeo();
+					bm.setStrFechaCarga(values[1]);
+					bm.setStrDivisionCliente(values[2]);
+					bm.setStrCanalCliente(values[3]);
+					bm.setStrCodigoMaterial(""+Integer.parseInt(values[4]));
+					bm.setStrDescripcion(values[5]);
+					bm.setStrFechaVigenciaDesde(values[6]);
+					bm.setStrFechaVigenciaHasta(values[7]);
+					listaFinal.add(bm);
+				}
+				Promesa.getInstance().mostrarAvisoSincronizacion("");
+				return listaFinal;
+			} else {
+				return null;
+			}
+		} catch (Exception e) {
+			Util.mostrarExcepcion(e);
+			return null;
+		}
+	}
 
+	@SuppressWarnings("rawtypes")
+	public List<BeanPromocion> listaMaterialesPromocion(String strCodVendedor) {
+		try {
+			List<BeanPromocion> listaFinal = new ArrayList<BeanPromocion>();
+			Promesa.getInstance().mostrarAvisoSincronizacion("SAP: Materiales de mercadeo");
+			ConexionSAP con = Conexiones.getConexionSAP();
+			if (con != null) {
+				Promesa.getInstance().mostrarAvisoSincronizacion("SAP: Materiales de mercadeo");
+				con.RegistrarRFC("ZSD_RFC_GEN_PROMOCION");
+				con.EjecutarRFC();
+				con.CreaTabla("ET_MATERIAL");
+				List ur1 = con.ObtenerDatosTabla();
+				con.DesconectarSAP();
+				String[] values = null;
+				BeanPromocion bp = null;
+				for (int i = 0; i < ur1.size(); i++) {
+					Promesa.getInstance().mostrarAvisoSincronizacion("SAP: Materiales de mercadeo");
+					String cadena = String.valueOf(ur1.get(i));
+					values = cadena.split("¬");
+					bp = new BeanPromocion();
+					bp.setStrFecha(values[1]);
+					bp.setStrDivisionCliente(values[2]);
+					bp.setStrCanalCliente(values[3]);
+					bp.setStrCodigoCliente(values[4].equals("")?"":""+Integer.parseInt(values[4]));
+					bp.setStrTitulo(values[5]);
+					bp.setStrDescripcion(values[6]);
+					bp.setStrFamilia1(values[7]);
+					bp.setStrFamilia2(values[8]);
+					bp.setStrFechaVigenciaDesde(values[9]);
+					bp.setStrFechaVigenciaHasta(values[10]);
+					listaFinal.add(bp);
+				}
+				Promesa.getInstance().mostrarAvisoSincronizacion("");
+				return listaFinal;
+			} else {
+				return null;
+			}
+		} catch (Exception e) {
+			Util.mostrarExcepcion(e);
+			return null;
+		}
+	}
+	
 	@SuppressWarnings("rawtypes")
 	public List<List<BeanMaterial>> listaMaterialesVentaCruzada(String strCodVendedor) {
 		try {

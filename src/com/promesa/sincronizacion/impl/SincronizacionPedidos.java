@@ -611,6 +611,22 @@ public class SincronizacionPedidos {
 		return "E";
 	}
 	
+	public static String sincronizarMercadeo(String strCodVendedor) {
+		com.promesa.pedidos.sql.impl.SqlSincronizacionImpl sqlPedido = new com.promesa.pedidos.sql.impl.SqlSincronizacionImpl();
+		if (sqlPedido.sincronizarMercadeo()) {
+			return "S";
+		}
+		return "E";
+	}
+	
+	public static String sincronizarPromocion(String strCodVendedor) {
+		com.promesa.pedidos.sql.impl.SqlSincronizacionImpl sqlPedido = new com.promesa.pedidos.sql.impl.SqlSincronizacionImpl();
+		if (sqlPedido.sincronizarPromocion()) {
+			return "S";
+		}
+		return "E";
+	}
+	
 	public static String sincronizarTablaMaterialStock() {
 		com.promesa.pedidos.sql.impl.SqlSincronizacionImpl sqlPedido = new com.promesa.pedidos.sql.impl.SqlSincronizacionImpl();
 		if (sqlPedido.sincronizaMaterialStock()) {

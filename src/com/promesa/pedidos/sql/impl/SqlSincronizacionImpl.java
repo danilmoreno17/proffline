@@ -30,6 +30,8 @@ import com.promesa.pedidos.bean.BeanClienteMaterial;
 import com.promesa.pedidos.bean.BeanCondicionPago;
 import com.promesa.pedidos.bean.BeanJerarquia;
 import com.promesa.pedidos.bean.BeanMaterial;
+import com.promesa.pedidos.bean.BeanMercadeo;
+import com.promesa.pedidos.bean.BeanPromocion;
 import com.promesa.pedidos.bean.BeanSede;
 import com.promesa.pedidos.bean.BeanTipologia;
 import com.promesa.pedidos.bean.BeanVentaCruzada;
@@ -310,6 +312,46 @@ public class SqlSincronizacionImpl implements SqlSincronizacion {
 				resultado = true;
 			}
 		} catch (Exception e) {
+			Mensaje.mostrarError(e.getMessage());
+		}
+		return resultado;
+	}
+	
+	public boolean sincronizarMercadeo(){
+		resultado = false;
+		List<BeanMercadeo> listMercadeo = null;
+		List<BeanPromocion> listPromocion = null;
+		SqlMaterial sqlMaterial = new SqlMaterialImpl();
+		try{
+			objSAP = new SPedidos();
+			listMercadeo = objSAP.listaMaterialesMercadeo(Promesa.getInstance().datose.get(0).getStrCodigo());
+			if(listMercadeo != null && listMercadeo.size() > 0){
+				sqlMaterial.insertarMaterialesMercadeo(listMercadeo);
+				resultado = true;
+			}
+			listPromocion = objSAP.listaMaterialesPromocion(Promesa.getInstance().datose.get(0).getStrCodigo());
+			if(listPromocion != null && listPromocion.size() > 0){
+				sqlMaterial.insertarMaterialesPromocion(listPromocion);
+				resultado = true;
+			}
+		}catch(Exception e){
+			Mensaje.mostrarError(e.getMessage());
+		}
+		return resultado;
+	}
+	
+	public boolean sincronizarPromocion(){
+		resultado = false;
+		List<BeanPromocion> listPromocion = null;
+		SqlMaterial sqlMaterial = new SqlMaterialImpl();
+		try{
+			objSAP = new SPedidos();
+			listPromocion = objSAP.listaMaterialesPromocion(Promesa.getInstance().datose.get(0).getStrCodigo());
+			if(listPromocion != null && listPromocion.size() > 0){
+				sqlMaterial.insertarMaterialesPromocion(listPromocion);
+				resultado = true;
+			}
+		}catch(Exception e){
 			Mensaje.mostrarError(e.getMessage());
 		}
 		return resultado;

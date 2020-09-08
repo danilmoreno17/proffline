@@ -40,7 +40,9 @@ public class ModeloConsultaDinamica2 implements TableModel{
 		case 15:
 		case 16:
 		case 18:
-		case 19:
+		case 20:
+		case 21:
+		case 22:
 			return Double.class;
 		case 1:
 		case 2:
@@ -49,6 +51,7 @@ public class ModeloConsultaDinamica2 implements TableModel{
 		case 5:
 		case 9:
 		case 17:
+		case 19:
 			return String.class;
 		default:
 			return Object.class;
@@ -57,7 +60,7 @@ public class ModeloConsultaDinamica2 implements TableModel{
 
 	@Override
 	public int getColumnCount() {
-		return 20;
+		return 23;
 	}
 
 	@Override
@@ -104,6 +107,12 @@ public class ModeloConsultaDinamica2 implements TableModel{
 			return "VTA/USD";
 		case 19:
 			return "%CUMPL.";
+		case 20:
+			return "SUG. MES";
+		case 21:
+			return "FAC. MES";
+		case 22:
+			return "RESTANTE";
 		default:
 			return "";
 		}
@@ -197,7 +206,43 @@ public class ModeloConsultaDinamica2 implements TableModel{
 		case 18:
 			return items.get(rowIndex).getDblValorReal();
 		case 19:
-			return items.get(rowIndex).getDblCumplimiento();
+			return  String.format("%.2f",items.get(rowIndex).getDblCumplimiento())+"%";
+		case 20:
+			String strValorSuge = items.get(rowIndex).getStrCantSugerido().trim();
+//			return strValorPromedio;
+			Double valorSuge = 0d;
+			if (strValorSuge != null) {
+				try {
+					valorSuge = Double.parseDouble(strValorSuge);
+				} catch (Exception e) {
+					valorSuge = 0d;
+				}
+			}
+			return valorSuge.intValue();
+		case 21:
+			String strValorFact = items.get(rowIndex).getStrCantFacturado().trim();
+//			return strValorPromedio;
+			Double valorFact = 0d;
+			if (strValorFact != null) {
+				try {
+					valorFact = Double.parseDouble(strValorFact);
+				} catch (Exception e) {
+					valorFact = 0d;
+				}
+			}
+			return valorFact.intValue();
+		case 22:
+			String strValorReal = items.get(rowIndex).getStrCantRestante().trim();
+//			return strValorPromedio;
+			Double valorRest = 0d;
+			if (strValorReal != null) {
+				try {
+					valorRest = Double.parseDouble(strValorReal);
+				} catch (Exception e) {
+					valorRest = 0d;
+				}
+			}
+			return valorRest.intValue();
 		default:
 			return "";
 		}
@@ -327,6 +372,15 @@ public class ModeloConsultaDinamica2 implements TableModel{
 			}
 			items.get(rowIndex).setDblCumplimiento(valor);
 			break;
+		case 20:
+			items.get(rowIndex).setStrCantSugerido(valor.toString());
+			break;
+		case 21:
+			items.get(rowIndex).setStrCantFacturado(valor.toString());
+			break;
+		case 22:
+			items.get(rowIndex).setStrCantRestante(valor.toString());
+			break;
 		}
 	}
 	
@@ -340,7 +394,8 @@ public class ModeloConsultaDinamica2 implements TableModel{
 	
 	public Object[] identificadorClumnas(){
 		Object idColumnas[] = new Object[]{"CODIGO", "DESCRIPCIÓN/LARGA", "UN", "MARCE", "TPO", " ", "LISTA","NETO",
-				"+IVA", " ", "PEDIDO", "% DSCT","CONFIRM.","STOCK","TOTAL", "VTA/USD"/*"TOT. ACM."*/, "VTA/UN.VTA"/*"PMD/UND"*/,"FECHA","VTA/USD","%CUMPL."};
+				"+IVA", " ", "PEDIDO", "% DSCT","CONFIRM.","STOCK","TOTAL", "VTA/USD"/*"TOT. ACM."*/, "VTA/UN.VTA"/*"PMD/UND"*/,"FECHA","VTA/USD","%CUMPL.","CANT. SUG. MES","CANT. FAC. MES","CANT. RESTANTE"};
+		;
 		return idColumnas;
 	}
 	

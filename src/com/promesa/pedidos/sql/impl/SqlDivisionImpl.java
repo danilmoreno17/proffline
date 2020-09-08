@@ -339,6 +339,7 @@ public class SqlDivisionImpl implements SqlDivision {
 		column.put("String:18", "VENTAS_ACUMULADO");
 		column.put("String:19", "VENTAS_PROMEDIO");
 		column.put("String:20", "CLIENTE");
+		column.put("String:21", "VENTA_SUGERIDA");
 		
 		String type = ObtenerType(t);
 		
@@ -413,6 +414,7 @@ public class SqlDivisionImpl implements SqlDivision {
 			material.setTypeMat(res.get("TYPEMAT").toString());
 			material.setDblAcumulado(Double.parseDouble(res.get("VENTAS_ACUMULADO").toString()));
 			material.setDblPromedio(Double.parseDouble(res.get("VENTAS_PROMEDIO").toString()));
+			material.setCantSug(Double.parseDouble(res.get("VENTA_SUGERIDA").toString()));
 			material.setStrCodCliente(res.get("CLIENTE").toString());
 			material.setPrdha(res.get("PRDHA").toString());
 			materiales.add(material);
@@ -613,16 +615,6 @@ public class SqlDivisionImpl implements SqlDivision {
 				}
 			}
 			sqlSelect = sqlSelect + sql_temp + "%'";
-		}
-		if (tipo == 2) {
-			if (tipologia != null) {
-				try {
-					tipologia = "" + Integer.parseInt(tipologia);
-				} catch (NumberFormatException e) {
-					tipologia = "";
-				}
-				sqlSelect = sqlSelect + " ";
-			}
 		}
 		sqlSelect = sqlSelect.trim() + " ORDER BY VENTAS_ACUMULADO DESC;";
 		ResultExecuteQuery resultExecuteQuery = new ResultExecuteQuery(sqlSelect, column, Constante.BD_SYNC);

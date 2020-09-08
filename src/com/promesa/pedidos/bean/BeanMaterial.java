@@ -55,7 +55,35 @@ public class BeanMaterial implements Comparable {
 	private String strCliente;
 	private String strVentaReal;
 	
+	private Double cantSug;
 	
+	private String divisionCliente;
+	private String descMercadeo;
+	
+	public String getDivisionCliente() {
+		return divisionCliente;
+	}
+
+	public void setDivisionCliente(String divisionCliente) {
+		this.divisionCliente = divisionCliente;
+	}
+
+	public String getDescMercadeo() {
+		return descMercadeo;
+	}
+
+	public void setDescMercadeo(String descMercadeo) {
+		this.descMercadeo = descMercadeo;
+	}
+
+	public Double getCantSug() {
+		return cantSug;
+	}
+
+	public void setCantSug(Double cantSug) {
+		this.cantSug = cantSug;
+	}
+
 	public String getStrVentaReal() {
 		return strVentaReal;
 	}

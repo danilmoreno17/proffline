@@ -63,6 +63,34 @@ public class Item {
 	private Double dblValorReal=0d;
 	private Double dblCumplimiento=0d;
 	
+	private String strCantSugerido;
+	private String strCantFacturado;
+	private String strCantRestante;
+	
+	public String getStrCantSugerido() {
+		return strCantSugerido;
+	}
+
+	public void setStrCantSugerido(String strCantSugerido) {
+		this.strCantSugerido = strCantSugerido;
+	}
+
+	public String getStrCantFacturado() {
+		return strCantFacturado;
+	}
+
+	public void setStrCantFacturado(String strCantFacturado) {
+		this.strCantFacturado = strCantFacturado;
+	}
+
+	public String getStrCantRestante() {
+		return strCantRestante;
+	}
+
+	public void setStrCantRestante(String strCantRestante) {
+		this.strCantRestante = strCantRestante;
+	}
+
 	public Double getDblValorReal() {
 		return dblValorReal;
 	}

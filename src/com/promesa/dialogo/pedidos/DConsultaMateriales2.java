@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
+
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.ComboBoxModel;
@@ -47,10 +48,12 @@ import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.search.ScoreDoc;
+
 import com.promesa.bean.BeanConexion;
 import com.promesa.bean.BeanDato;
 import com.promesa.internalFrame.pedidos.IPedidos;
@@ -87,6 +90,7 @@ import com.promesa.util.Constante;
 import com.promesa.util.DLocker;
 import com.promesa.util.Mensaje;
 import com.promesa.util.Util;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
@@ -300,13 +304,18 @@ public class DConsultaMateriales2 extends javax.swing.JDialog implements FocusLi
 	    g_es3.add(cm.getColumn(14));
 	    g_es3.add(cm.getColumn(17));
 	    
-	    ColumnGroup g_top = new ColumnGroup(cmbTipoConsulta.getSelectedIndex()==4?"OBJ. VTA. CRZ.":"TOP(Prom)");
+	    ColumnGroup g_top = new ColumnGroup(cmbTipoConsulta.getSelectedIndex()==4?"Prom. 6 Meses":"TOP(Prom)");
 	    g_top.add(cm.getColumn(15));
 	    g_top.add(cm.getColumn(16));
 	    
 	    ColumnGroup g_vta_crz = new ColumnGroup("VENTA REAL");
 	    g_vta_crz.add(cm.getColumn(18));
 	    g_vta_crz.add(cm.getColumn(19));
+	    
+	    ColumnGroup g_cant = new ColumnGroup("CANT.");
+	    g_cant.add(cm.getColumn(20));
+	    g_cant.add(cm.getColumn(21));
+	    g_cant.add(cm.getColumn(22));
 	    
 	    GroupableTableHeader header = (GroupableTableHeader)tblMateriales.getTableHeader();
 	    
@@ -319,6 +328,7 @@ public class DConsultaMateriales2 extends javax.swing.JDialog implements FocusLi
 	    header.addColumnGroup(g_es3);
 	    header.addColumnGroup(g_top);
 	    header.addColumnGroup(g_vta_crz);
+	    header.addColumnGroup(g_cant);
 	}
 
 	public String getCondPago() {
@@ -991,7 +1001,7 @@ public class DConsultaMateriales2 extends javax.swing.JDialog implements FocusLi
 			buscar();
 			break;
 		case 4://Venta Cruzada
-			mensaje = cliente.getStrCodigoTipologia() + "-" + cliente.getStrDescripcionTipologia();
+			mensaje = cliente.getStrIdCliente() + "-" + cliente.getStrNombreCliente().toUpperCase();
 			cambiarVisibilidadLimitadorRegistros(true);
 			strPath = Constante.PATH + Constante.VENTACRUZADA;
 			buscar();
@@ -1094,15 +1104,19 @@ public class DConsultaMateriales2 extends javax.swing.JDialog implements FocusLi
                     	System.out.println("nulle");
                     }              	                	
                 }
+                boolean flag = false;
                 for(BeanMaterial mate : materiaTopCliente){
-                	if ("NOT".equals(Status)&&col!=10&&col!=11&&!mate.getIdMaterial().equals(IdMaterial)&&cmbTipoConsulta.getSelectedIndex()==2) {
-                        try{
-                        	c.setBackground(new Color(255,102,102));
-                        }catch (NullPointerException nulle){
-                        	System.out.println("nulle");
-                        }              	                	
-                    }	
+                	if(mate.getIdMaterial().equals(IdMaterial)){
+                		flag = true;
+                	}
                 }
+                if ("NOT".equals(Status)&&col!=10&&col!=11&&cmbTipoConsulta.getSelectedIndex()==2&&!flag) {
+                    try{
+                    	c.setBackground(new Color(205,97,85));
+                    }catch (NullPointerException nulle){
+                    	System.out.println("nulle");
+                    }              	                	
+                }	
                 return c;
             }
         };
@@ -2028,19 +2042,28 @@ public class DConsultaMateriales2 extends javax.swing.JDialog implements FocusLi
 					it.setFecha(beanMaterial.getZzordco()!=null?beanMaterial.getZzordco():"NOT");
 					if(beanMaterial.getStrVentaReal()!=null){
 						it.setDblValorReal(Double.valueOf(beanMaterial.getStrVentaReal()));
-						String cumpl = String.format("%.2f", (it.getDblValorReal()/beanMaterial.getDblAcumulado())*100);
-						it.setDblCumplimiento(Double.valueOf(cumpl));
+						Double dblCumpl =(it.getDblValorReal()/beanMaterial.getDblAcumulado())*100;
+						it.setDblCumplimiento(dblCumpl);
+					}
+					if(beanMaterial.getCantSug()!=null){
+						it.setStrCantFacturado("" + beanMaterial.getDblPromedio());
+						it.setStrCantSugerido("" + beanMaterial.getCantSug());
+						Double cant = (beanMaterial.getCantSug() - beanMaterial.getDblPromedio());
+						it.setStrCantRestante("" + (cant<0d?0d:cant));
 					}
 					modeloTablaItems.agregarItem(it);
 				}
 				lblCantidadRegistros.setText("Número de registros: " + tblMateriales.getModel().getRowCount());
 				int tipo = cmbTipoConsulta.getSelectedIndex();
-				if (tipo == 1 || tipo == 2) {
-					setAnchoColumnasMostrarAdicionales2();
+				if (tipo == 1) {
+					setAnchoColumnasMostrarAdicionales5();
 				} else {
 					setAnchoColumnas2();
 				}
-				if(tipo ==  3){
+				if(tipo == 2){
+					setAnchoColumnasMostrarAdicionales2();
+				}
+				if(tipo == 3){
 					setAnchoColumnasMostrarAdicionales3();
 				}
 				if(tipo == 4){
@@ -2230,6 +2253,24 @@ public class DConsultaMateriales2 extends javax.swing.JDialog implements FocusLi
 				columnaTabla.setMaxWidth(anchoColumna);
 				columnaTabla.setPreferredWidth(anchoColumna);
 				break;
+			case 20:
+				anchoColumna = 0;
+				columnaTabla.setMinWidth(anchoColumna);
+				columnaTabla.setMaxWidth(anchoColumna);
+				columnaTabla.setPreferredWidth(anchoColumna);
+				break;
+			case 21:
+				anchoColumna = 0;
+				columnaTabla.setMinWidth(anchoColumna);
+				columnaTabla.setMaxWidth(anchoColumna);
+				columnaTabla.setPreferredWidth(anchoColumna);
+				break;
+			case 22:
+				anchoColumna = 0;
+				columnaTabla.setMinWidth(anchoColumna);
+				columnaTabla.setMaxWidth(anchoColumna);
+				columnaTabla.setPreferredWidth(anchoColumna);
+				break;
 			}
 		}
 	}
@@ -2349,6 +2390,24 @@ public class DConsultaMateriales2 extends javax.swing.JDialog implements FocusLi
 				columnaTabla.setPreferredWidth(anchoColumna);
 				break;
 			case 19:
+				anchoColumna = 0;
+				columnaTabla.setMinWidth(anchoColumna);
+				columnaTabla.setMaxWidth(anchoColumna);
+				columnaTabla.setPreferredWidth(anchoColumna);
+				break;
+			case 20:
+				anchoColumna = 0;
+				columnaTabla.setMinWidth(anchoColumna);
+				columnaTabla.setMaxWidth(anchoColumna);
+				columnaTabla.setPreferredWidth(anchoColumna);
+				break;
+			case 21:
+				anchoColumna = 0;
+				columnaTabla.setMinWidth(anchoColumna);
+				columnaTabla.setMaxWidth(anchoColumna);
+				columnaTabla.setPreferredWidth(anchoColumna);
+				break;
+			case 22:
 				anchoColumna = 0;
 				columnaTabla.setMinWidth(anchoColumna);
 				columnaTabla.setMaxWidth(anchoColumna);
@@ -2481,6 +2540,169 @@ public class DConsultaMateriales2 extends javax.swing.JDialog implements FocusLi
 				columnaTabla.setMaxWidth(anchoColumna);
 				columnaTabla.setPreferredWidth(anchoColumna);
 				break;
+			case 20:
+				anchoColumna = 0;
+				columnaTabla.setMinWidth(anchoColumna);
+				columnaTabla.setMaxWidth(anchoColumna);
+				columnaTabla.setPreferredWidth(anchoColumna);
+				break;
+			case 21:
+				anchoColumna = 0;
+				columnaTabla.setMinWidth(anchoColumna);
+				columnaTabla.setMaxWidth(anchoColumna);
+				columnaTabla.setPreferredWidth(anchoColumna);
+				break;
+			case 22:
+				anchoColumna = 0;
+				columnaTabla.setMinWidth(anchoColumna);
+				columnaTabla.setMaxWidth(anchoColumna);
+				columnaTabla.setPreferredWidth(anchoColumna);
+				break;
+			}
+		}
+	}
+	private void setAnchoColumnasMostrarAdicionales5() {
+		int anchoColumna = 0;
+		TableColumnModel modeloColumna = tblMateriales.getColumnModel();
+		TableColumn columnaTabla;
+		for (int i = 0; i < tblMateriales.getColumnCount(); i++) {
+			columnaTabla = modeloColumna.getColumn(i);
+			switch (i) {
+			case 0:
+				anchoColumna = 50;
+				columnaTabla.setMinWidth(anchoColumna);
+				columnaTabla.setMaxWidth(anchoColumna);
+				columnaTabla.setPreferredWidth(anchoColumna);
+				break;
+			case 1:
+				anchoColumna = 200;
+				columnaTabla.setPreferredWidth(anchoColumna);
+				break;
+			case 2:
+				anchoColumna = 30;
+				columnaTabla.setMinWidth(anchoColumna);
+				columnaTabla.setMaxWidth(anchoColumna);
+				break;
+			case 3:
+				anchoColumna = 20;
+				columnaTabla.setMinWidth(anchoColumna);
+				columnaTabla.setPreferredWidth(anchoColumna);
+				break;
+			case 4:
+				anchoColumna = 30;
+				columnaTabla.setMinWidth(anchoColumna);
+				columnaTabla.setMaxWidth(anchoColumna);
+				columnaTabla.setPreferredWidth(anchoColumna);
+				break;
+			case 5:
+				anchoColumna = 5;
+				columnaTabla.setMinWidth(anchoColumna);
+				columnaTabla.setMaxWidth(anchoColumna);
+				columnaTabla.setPreferredWidth(anchoColumna);
+				break;
+			case 6:
+				anchoColumna = 90;
+				columnaTabla.setMinWidth(anchoColumna);
+				columnaTabla.setMaxWidth(anchoColumna);
+				columnaTabla.setPreferredWidth(anchoColumna);
+				break;
+			case 7:
+				anchoColumna = 90;
+				columnaTabla.setMinWidth(anchoColumna);
+				columnaTabla.setMaxWidth(anchoColumna);
+				columnaTabla.setPreferredWidth(anchoColumna);
+				break;
+			case 8:
+				anchoColumna = 90;
+				columnaTabla.setMinWidth(anchoColumna);
+				columnaTabla.setMaxWidth(anchoColumna);
+				columnaTabla.setPreferredWidth(anchoColumna);
+				break;
+			case 9:
+				anchoColumna = 5;
+				columnaTabla.setMinWidth(anchoColumna);
+				columnaTabla.setMaxWidth(anchoColumna);
+				columnaTabla.setPreferredWidth(anchoColumna);
+				break;
+			case 10:
+				anchoColumna = 50;
+				columnaTabla.setMinWidth(anchoColumna);
+				columnaTabla.setMaxWidth(anchoColumna);
+				columnaTabla.setPreferredWidth(anchoColumna);
+				break;
+			case 11:
+				anchoColumna = 50;
+				columnaTabla.setMinWidth(anchoColumna);
+				columnaTabla.setMaxWidth(anchoColumna);
+				columnaTabla.setPreferredWidth(anchoColumna);
+				break;
+			case 12:
+				anchoColumna = 45;
+				columnaTabla.setMinWidth(anchoColumna);
+				columnaTabla.setMaxWidth(anchoColumna);
+				columnaTabla.setPreferredWidth(anchoColumna);
+				break;
+			case 13:
+				//TODO
+				anchoColumna = 65;
+				columnaTabla.setMinWidth(anchoColumna);
+				columnaTabla.setMaxWidth(anchoColumna);
+				columnaTabla.setPreferredWidth(anchoColumna);
+				break;
+			case 14:
+				anchoColumna = 55;
+				columnaTabla.setMinWidth(anchoColumna);
+				columnaTabla.setMaxWidth(anchoColumna);
+				columnaTabla.setPreferredWidth(anchoColumna);
+				break;
+			case 15:
+				anchoColumna = 0;
+				columnaTabla.setMinWidth(anchoColumna);
+				columnaTabla.setMaxWidth(anchoColumna);
+				columnaTabla.setPreferredWidth(anchoColumna);
+				break;
+			case 16:
+				anchoColumna = 0;
+				columnaTabla.setMinWidth(anchoColumna);
+				columnaTabla.setMaxWidth(anchoColumna);
+				columnaTabla.setPreferredWidth(anchoColumna);
+				break;
+			case 17:
+				anchoColumna = 0;
+				columnaTabla.setMinWidth(anchoColumna);
+				columnaTabla.setMaxWidth(anchoColumna);
+				columnaTabla.setPreferredWidth(anchoColumna);
+				break;
+			case 18:
+				anchoColumna = 0;
+				columnaTabla.setMinWidth(anchoColumna);
+				columnaTabla.setMaxWidth(anchoColumna);
+				columnaTabla.setPreferredWidth(anchoColumna);
+				break;
+			case 19:
+				anchoColumna = 0;
+				columnaTabla.setMinWidth(anchoColumna);
+				columnaTabla.setMaxWidth(anchoColumna);
+				columnaTabla.setPreferredWidth(anchoColumna);
+				break;
+			case 20:
+				anchoColumna = 60;
+				columnaTabla.setMinWidth(anchoColumna);
+				columnaTabla.setMaxWidth(anchoColumna);
+				columnaTabla.setPreferredWidth(anchoColumna);
+				break;
+			case 21:
+				anchoColumna = 60;
+				columnaTabla.setMinWidth(anchoColumna);
+				columnaTabla.setMaxWidth(anchoColumna);
+				columnaTabla.setPreferredWidth(anchoColumna);
+				break;
+			case 22:
+				anchoColumna = 60;
+				columnaTabla.setMinWidth(anchoColumna);
+				columnaTabla.setMaxWidth(anchoColumna);
+				columnaTabla.setPreferredWidth(anchoColumna);
+				break;
 			}
 		}
 	}
@@ -2605,6 +2827,24 @@ public class DConsultaMateriales2 extends javax.swing.JDialog implements FocusLi
 				break;
 			case 19:
 				anchoColumna = 60;
+				columnaTabla.setMinWidth(anchoColumna);
+				columnaTabla.setMaxWidth(anchoColumna);
+				columnaTabla.setPreferredWidth(anchoColumna);
+				break;
+			case 20:
+				anchoColumna = 0;
+				columnaTabla.setMinWidth(anchoColumna);
+				columnaTabla.setMaxWidth(anchoColumna);
+				columnaTabla.setPreferredWidth(anchoColumna);
+				break;
+			case 21:
+				anchoColumna = 0;
+				columnaTabla.setMinWidth(anchoColumna);
+				columnaTabla.setMaxWidth(anchoColumna);
+				columnaTabla.setPreferredWidth(anchoColumna);
+				break;
+			case 22:
+				anchoColumna = 0;
 				columnaTabla.setMinWidth(anchoColumna);
 				columnaTabla.setMaxWidth(anchoColumna);
 				columnaTabla.setPreferredWidth(anchoColumna);

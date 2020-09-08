@@ -18,10 +18,17 @@ import com.promesa.pedidos.bean.BeanCondicionComercial4x;
 import com.promesa.pedidos.bean.BeanCondicionComercial5x;
 import com.promesa.pedidos.bean.BeanCondicionComercialEscala;
 import com.promesa.pedidos.bean.BeanMaterial;
+import com.promesa.pedidos.bean.BeanMercadeo;
+import com.promesa.pedidos.bean.BeanPromocion;
 import com.promesa.pedidos.bean.BeanVentaCruzada;
 import com.promesa.pedidos.sql.SqlMaterial;
 import com.promesa.util.Constante;
 import com.promesa.util.Util;
+
+
+
+
+
 
 
 
@@ -361,6 +368,49 @@ public class SqlMaterialImpl implements SqlMaterial {
 		return listaVentaCruzada;
 	}
 	
+	public List<BeanPromocion> getListPromociones(String strCodigoCliente, String strDivisionCliente, String strCanalCliente){
+		List<BeanPromocion> listaPromociones = new ArrayList<BeanPromocion>();
+		ResultExecuteQuery resultExecuteQuery = null;
+		BeanPromocion prom = null;
+		column = new HashMap();
+		column.put("String:0", "FECHA");
+		column.put("String:1", "DIVISION_CLIENTE");
+		column.put("String:2", "CANAL_CLIENTE");
+		column.put("String:3", "CODIGO_CLIENTE");
+		column.put("String:4", "TITULO");
+		column.put("String:5", "FAMILIA_1");
+		column.put("String:6", "FAMILIA_2");
+		column.put("String:7", "DESCRIPCION");
+		column.put("String:8", "FECHA_VIG_DES");
+		column.put("String:9", "FECHA_VIG_HAS");
+		String sqlPromocion = " SELECT FECHA, DIVISION_CLIENTE, CANAL_CLIENTE, CODIGO_CLIENTE, TITULO, FAMILIA_1, FAMILIA_2, DESCRIPCION, FECHA_VIG_DES, FECHA_VIG_HAS "
+				+ "FROM PROFFLINE_TB_MATERIAL_PROMOCION "
+				+ "where CODIGO_CLIENTE='" + strCodigoCliente + "' OR "
+				+ "(DIVISION_CLIENTE='" + strDivisionCliente + "' AND CANAL_CLIENTE='') OR "
+				+ "(CANAL_CLIENTE='" + strCanalCliente + "' AND DIVISION_CLIENTE='') OR "
+				+ "(CANAL_CLIENTE='" + strCanalCliente + "' AND DIVISION_CLIENTE='" + strDivisionCliente + "')";
+		try {
+			resultExecuteQuery = new ResultExecuteQuery(sqlPromocion, column, Constante.BD_SYNC);
+			mapResultado = resultExecuteQuery.getMap();
+			for(HashMap res:mapResultado.values()){	
+				prom = new BeanPromocion();
+				prom.setStrFecha(res.get("FECHA").toString());
+				prom.setStrDivisionCliente(res.get("DIVISION_CLIENTE").toString());
+				prom.setStrCanalCliente(res.get("CANAL_CLIENTE").toString());
+				prom.setStrCodigoCliente(res.get("CODIGO_CLIENTE").toString());
+				prom.setStrTitulo(res.get("TITULO").toString());
+				prom.setStrFamilia1(res.get("FAMILIA_1").toString());
+				prom.setStrFamilia2(res.get("FAMILIA_2").toString());
+				prom.setStrDescripcion(res.get("DESCRIPCION").toString());
+				prom.setStrFechaVigenciaDesde(res.get("FECHA_VIG_DES").toString());
+				prom.setStrFechaVigenciaHasta(res.get("FECHA_VIG_HAS").toString());
+				listaPromociones.add(prom);
+			}
+		} catch (Exception e) {
+			Util.mostrarExcepcion(e);
+		}
+		return listaPromociones;
+	}
 	public void setInsertarMaterial(List<BeanMaterial> listm) {
 		final List<String> listaSQL = new ArrayList<String>();
 		for (BeanMaterial m : listm) {
@@ -1119,13 +1169,13 @@ public class SqlMaterialImpl implements SqlMaterial {
 		for (BeanMaterial m : listaMateriales) {
 			String cadenaSQL = 	" INSERT INTO PROFFLINE_TB_MATERIAL_TOP_CLIENTE(MATNR, STOCK, S_U, SHORT_TEXT, TEXT_LINE, TARGET_QTY, " +
 								"PRICE_1, PRICE_2, PRICE_3, PRICE_4, PRDHA, HER, NORMT, ZZORDCO, CELL_DESIGN, MTART, TYPEMAT, " +
-								"GRUPO_COMPRA, ST_1, VENTAS_ACUMULADO, VENTAS_PROMEDIO, CLIENTE) VALUES ('" + m.getIdMaterial() + "', '" +
+								"GRUPO_COMPRA, ST_1, VENTAS_ACUMULADO, VENTAS_PROMEDIO, CLIENTE, VENTA_SUGERIDA) VALUES ('" + m.getIdMaterial() + "', '" +
 								m.getStock() + "','" + m.getUn() + "','" + m.getDescripcion() + "','" + m.getText_line() + "','" +
 								m.getTarget_qty() + "','" + m.getPrice_1() + "','" + m.getPrice_2() + "','" + m.getPrice_3() + "','" +
 								m.getPrice_4() + "','" + m.getPrdha() + "','" + m.getTipoMaterial() + "','" + m.getNormt() + "','" +
 								m.getZzordco() + "','" + m.getCell_design() + "','" + m.getMtart() + "','" + m.getTypeMat() + "','" +
 								m.getGrupo_compra() + "','" + m.getSt_1() + "','" + m.getDblAcumulado() + "','" + m.getDblPromedio() + "','" +
-								m.getStrCodCliente() + "');";
+								m.getStrCodCliente() + "', '"+m.getCantSug()+"');";
 			listaSQL.add(cadenaSQL);
 			
 		}
@@ -2088,8 +2138,130 @@ public class SqlMaterialImpl implements SqlMaterial {
 		return listaMaterial;
 	}
 
+	@Override
+	public void insertarMaterialesMercadeo(List<BeanMercadeo> listMercadeo) {
+		List<String> listaSQL = new ArrayList<String>();
+		listaSQL.add("DELETE FROM PROFFLINE_TB_MATERIAL_MERCADEO ");
+		ResultExecuteList resultExecute = new ResultExecuteList();
+		resultExecute.insertarListaConsultas(listaSQL, "", Constante.BD_SYNC);
+		
+		
+		
+		listaSQL = new ArrayList<String>();
+		for (BeanMercadeo listm : listMercadeo) {
+			String cadenaSQL = " INSERT INTO PROFFLINE_TB_MATERIAL_MERCADEO (FECHA_CARGA,DIVISION_CLIENTE,CANAL_CLIENTE,CODIGO_MATERIAL,DESCRIPCION,FECHA_VIG_DES,FECHA_VIG_HAS) "
+					+ "VALUES ('"+listm.getStrFechaCarga()
+					+"','"+listm.getStrDivisionCliente()
+					+"','"+listm.getStrCanalCliente()
+					+"','"+listm.getStrCodigoMaterial()
+					+"','"+listm.getStrDescripcion()
+					+"','"+listm.getStrFechaVigenciaDesde()
+					+"','"+listm.getStrFechaVigenciaHasta()+"')";
+			listaSQL.add(cadenaSQL);
+		}
+		ResultExecuteList resultExecute2 = new ResultExecuteList();
+		resultExecute2.insertarListaConsultas(listaSQL, "Top por mercadeo", Constante.BD_SYNC);
+	}
 
+	@Override
+	public List<BeanMercadeo> getListMercadeo(String divCliente, String canalCli) {
+		List<BeanMercadeo> listaMercadeo = new ArrayList<BeanMercadeo>();
+		ResultExecuteQuery resultExecuteQuery = null;
+		BeanMercadeo mercadeo = null;
+		column = new HashMap();
+		column.put("String:0", "FECHA_CARGA");
+		column.put("String:1", "DIVISION_CLIENTE");
+		column.put("String:2", "CANAL_CLIENTE");
+		column.put("String:3", "CODIGO_MATERIAL");
+		column.put("String:4", "DESCRIPCION");
+		column.put("String:5", "FECHA_VIG_DES");
+		column.put("String:6", "FECHA_VIG_HAS");
+		String sqlMercadeo = "SELECT FECHA_CARGA, DIVISION_CLIENTE, CANAL_CLIENTE, CODIGO_MATERIAL, DESCRIPCION, FECHA_VIG_DES, FECHA_VIG_HAS "
+				+ "FROM PROFFLINE_TB_MATERIAL_MERCADEO "
+				+ "WHERE (DIVISION_CLIENTE = '"+divCliente+"' AND CANAL_CLIENTE = '"+canalCli+"') "
+				+ "OR (DIVISION_CLIENTE = '"+divCliente+"' AND CANAL_CLIENTE = '') "
+				+ "OR (DIVISION_CLIENTE = '' AND CANAL_CLIENTE = '"+canalCli+"')";
+		if(canalCli!=null){
+			sqlMercadeo += " AND CANAL_CLIENTE = '"+canalCli+"'";
+		}
+		try{
+			resultExecuteQuery = new ResultExecuteQuery(sqlMercadeo, column, Constante.BD_SYNC);
+			mapResultado = resultExecuteQuery.getMap();
+			for(HashMap res:mapResultado.values()){
+				mercadeo = new BeanMercadeo();
+				mercadeo.setStrFechaCarga(res.get("FECHA_CARGA").toString());
+				mercadeo.setStrDivisionCliente(res.get("DIVISION_CLIENTE").toString());
+				mercadeo.setStrCanalCliente(res.get("CANAL_CLIENTE").toString());
+				mercadeo.setStrCodigoMaterial(res.get("CODIGO_MATERIAL").toString());
+				mercadeo.setStrDescripcion(res.get("DESCRIPCION").toString());
+				mercadeo.setStrFechaVigenciaDesde(res.get("FECHA_VIG_DES").toString());
+				mercadeo.setStrFechaVigenciaHasta(res.get("FECHA_VIG_HAS").toString());
+				listaMercadeo.add(mercadeo);
+			}
+		}catch(Exception e){
+			Util.mostrarExcepcion(e);
+		}
+		return listaMercadeo;
+	}
 
+	@Override
+	public BeanMercadeo getMercadeo(String codigoMaterial) {
+		BeanMercadeo mercadeo = null;
+		ResultExecuteQuery resultExecuteQuery = null;
+		column = new HashMap();
+		column.put("String:0", "FECHA_CARGA");
+		column.put("String:1", "DIVISION_CLIENTE");
+		column.put("String:2", "CANAL_CLIENTE");
+		column.put("String:3", "CODIGO_MATERIAL");
+		column.put("String:4", "DESCRIPCION");
+		column.put("String:5", "FECHA_VIG_DES");
+		column.put("String:6", "FECHA_VIG_HAS");
+		String sqlMercadeo = "SELECT FECHA_CARGA, DIVISION_CLIENTE, CANAL_CLIENTE, CODIGO_MATERIAL, DESCRIPCION, FECHA_VIG_DES, FECHA_VIG_HAS FROM PROFFLINE_TB_MATERIAL_MERCADEO WHERE CODIGO_MATERIAL = '"+codigoMaterial+"'";
+		try{
+			resultExecuteQuery = new ResultExecuteQuery(sqlMercadeo, column, Constante.BD_SYNC);
+			mapResultado = resultExecuteQuery.getMap();
+			for(HashMap res:mapResultado.values()){
+				mercadeo = new BeanMercadeo();
+				mercadeo.setStrFechaCarga(res.get("FECHA_CARGA").toString());
+				mercadeo.setStrDivisionCliente(res.get("DIVISION_CLIENTE").toString());
+				mercadeo.setStrCanalCliente(res.get("CANAL_CLIENTE").toString());
+				mercadeo.setStrCodigoMaterial(res.get("CODIGO_MATERIAL").toString());
+				mercadeo.setStrDescripcion(res.get("DESCRIPCION").toString());
+				mercadeo.setStrFechaVigenciaDesde(res.get("FECHA_VIG_DES").toString());
+				mercadeo.setStrFechaVigenciaHasta(res.get("FECHA_VIG_HAS").toString());
+			}
+		}catch(Exception e){
+			Util.mostrarExcepcion(e);
+		}
+		return mercadeo;
+	}
+
+	@Override
+	public void insertarMaterialesPromocion(List<BeanPromocion> listPromocion) {
+		List<String> listaSQL = new ArrayList<String>();
+		listaSQL.add("DELETE FROM PROFFLINE_TB_MATERIAL_PROMOCION");
+		ResultExecuteList resultExecute = new ResultExecuteList();
+		resultExecute.insertarListaConsultas(listaSQL, "", Constante.BD_SYNC);
+		listaSQL = new ArrayList<String>();
+		for (BeanPromocion listp : listPromocion) {
+			String cadenaSQL = " INSERT INTO PROFFLINE_TB_MATERIAL_PROMOCION (FECHA,DIVISION_CLIENTE,CANAL_CLIENTE,CODIGO_CLIENTE,TITULO,FAMILIA_1,DESCRIPCION,FAMILIA_2,FECHA_VIG_DES,FECHA_VIG_HAS) "
+					+ "VALUES ('"+listp.getStrFecha()
+					+"','"+listp.getStrDivisionCliente()
+					+"','"+listp.getStrCanalCliente()
+					+"','"+listp.getStrCodigoCliente()
+					+"','"+listp.getStrTitulo()
+					+"','"+listp.getStrFamilia1()
+					+"','"+listp.getStrDescripcion()
+					+"','"+listp.getStrFamilia2()
+					+"','"+listp.getStrFechaVigenciaDesde()
+					+"','"+listp.getStrFechaVigenciaHasta()+"')";
+			listaSQL.add(cadenaSQL);
+		}
+		ResultExecuteList resultExecute2 = new ResultExecuteList();
+		resultExecute2.insertarListaConsultas(listaSQL, "Productos de Promocion", Constante.BD_SYNC);
+		
+	}
+	
 	
 	
 }

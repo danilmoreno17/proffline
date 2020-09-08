@@ -103,10 +103,12 @@ import com.promesa.pedidos.bean.BeanCondicionExpedicion;
 import com.promesa.pedidos.bean.BeanCondicionPago;
 import com.promesa.pedidos.bean.BeanMaterial;
 import com.promesa.pedidos.bean.BeanMensaje;
+import com.promesa.pedidos.bean.BeanMercadeo;
 import com.promesa.pedidos.bean.BeanPedido;
 import com.promesa.pedidos.bean.BeanPedidoDetalle;
 import com.promesa.pedidos.bean.BeanPedidoHeader;
 import com.promesa.pedidos.bean.BeanPedidoPartners;
+import com.promesa.pedidos.bean.BeanPromocion;
 import com.promesa.pedidos.bean.BeanSede;
 import com.promesa.pedidos.bean.BeanTipoGestion;
 import com.promesa.pedidos.bean.BeanVentaCruzada;
@@ -147,6 +149,7 @@ public abstract class IPedidos extends javax.swing.JInternalFrame implements Foc
 	private String strbadate="";
 	private List<String> arrMarca;
 	private static IPedidos instance = null;
+	private BeanCliente cliente = null;
 
 	public IPedidos(String strbadate,BeanPedido pedido, String codigoCliente, String nombreCliente, String claseRiesgo,
 			String limiteCredito, String disponibilidad, String strCondicionPago, String titulo, String tituloReporte,
@@ -158,7 +161,7 @@ public abstract class IPedidos extends javax.swing.JInternalFrame implements Foc
 		this.arrMarca=new ArrayList();
 		initComponents();
 		SqlClienteImpl sqlCliente = new SqlClienteImpl();
-		BeanCliente cliente = sqlCliente.buscarCliente(codigoCliente);
+		cliente = sqlCliente.buscarCliente(codigoCliente);
 		instancia = this;
 		setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		this.addInternalFrameListener(this);
@@ -201,9 +204,60 @@ public abstract class IPedidos extends javax.swing.JInternalFrame implements Foc
 
 		Promesa.getInstance().configSplitPane(this.configurarMarcaEstrategica());
 		this.cargarMarcaEstrategica();
+		if(tipoVentana==Constante.VENTANA_CREAR_PROFORMA)
+			agregarMaterialMercadeo(cliente.getStrGrupoVentas());
 		//this.cargarIndicadores();
 	}
 
+	protected void agregarMaterialMercadeo(String divCliente) {
+		SqlMaterialImpl sqlMateriales = new SqlMaterialImpl();
+		List<BeanMercadeo> listmat = sqlMateriales.getListMercadeo(divCliente, cliente.getStrCodCanalDist());
+		int fila1 =0;
+		for(int i = 0;i<listmat.size();i++){
+				agregarItemVacio(-1);
+		}
+		mdlTblItems.actualizarPosiciones();
+		for(BeanMercadeo mat: listmat){		
+			int fila=mdlTblItems.posicionDisponible();
+			if (mat != null) {
+				BeanMaterial mate = sqlMateriales.getMaterial(mat.getStrCodigoMaterial());
+				Item material = new Item();
+				material.setDenominacion(mate.getDescripcion());
+				material.setPosicion(mdlTblItems.getValueAt(fila, 0).toString());
+				material.setCodigo(mat.getStrCodigoMaterial());
+				material.setUnidad(mate.getUn());
+				material.setCantidad("0");
+				material.setCantidadConfirmada(mdlTblItems.getValueAt(fila, 3).toString());
+				material.setPorcentajeDescuento(mdlTblItems.getValueAt(fila, 6).toString());
+				material.setStock("");
+				material.setStrFech_Ing(mdlTblItems.getValueAt(fila, 7).toString());
+				material.setPrecioNeto(mdlTblItems.obtenerItem(fila).getPrecioNeto());
+				material.setValorNeto(mdlTblItems.obtenerItem(fila).getValorNeto());
+				material.setTipo(0); // Item normal
+				material.setEsmaterialnuevo(true);
+				material.setEditable(true);
+
+				String tipoMaterial = mate.getTypeMat();
+				SqlClienteImpl sql = new SqlClienteImpl();
+				String check = sql.obtenerMarcaBloqueoAlmacen(codigoCliente);
+				if (tipoMaterial.compareTo("B") == 0 && check.compareTo("1") == 0) { // BODEGA
+					tipoMaterial = "B";
+				} else if (tipoMaterial.compareTo("N") == 0
+						|| (tipoMaterial.compareTo("B") == 0 && check.compareTo("0") == 0)) { // NORMAL
+					tipoMaterial = "N";
+				} else if (tipoMaterial.compareTo("P") == 0) { // PESADO
+					tipoMaterial = "P";
+				} else if (tipoMaterial.compareTo("R") == 0) { // ROJO
+					tipoMaterial = "R";
+				}
+				material.setTipoMaterial(tipoMaterial);
+				material.setSimulado(false);
+				mdlTblItems.agregarItem(material, fila);
+			}				
+		}
+	}
+
+	
 	protected void generarMensaje(String[] mensaje) {
 		if (mensaje != null && mensaje.length > 0) {
 			String html = "<html><table>";
@@ -335,12 +389,14 @@ public abstract class IPedidos extends javax.swing.JInternalFrame implements Foc
 		btnMaterialNuevo =new JButton();
 		btnVentaCruzada = new JButton();
 		btnVentaCruzadaCliente = new JButton();
+		btnPromociones = new JButton();
 		btnResultadoMarca = new JButton(); 
 		separador5 = new JToolBar.Separator();
 		separador6 = new JToolBar.Separator();
 		separador7 = new JToolBar.Separator();
 		separador8 = new JToolBar.Separator();
 		separador9 = new JToolBar.Separator();
+		separador10 = new JToolBar.Separator();
 		lblMensajes = new JLabel();
 		scroller = new JScrollPane();
 		tblPedidos = new JTable(){
@@ -378,6 +434,29 @@ public abstract class IPedidos extends javax.swing.JInternalFrame implements Foc
                 //---------------------------------------------------
                 return c;
             }
+			
+			 public String getToolTipText(MouseEvent e) {
+	                String tip = null;
+	                java.awt.Point p = e.getPoint();
+	                int rowIndex = rowAtPoint(p);
+	                int colIndex = columnAtPoint(p);
+	                int realColumnIndex = convertColumnIndexToModel(colIndex);
+	                int realRowIndex = convertRowIndexToModel(rowIndex);
+	                String IdMaterial = (String)getValueAt(realRowIndex, 1);
+	                BeanMercadeo mercadeo = sqlMateriales.getMercadeo(IdMaterial);
+	                if(mercadeo!=null){
+		                if (realColumnIndex == 1||realColumnIndex == 8) {
+		                    tip = mercadeo.getStrDescripcion();
+		                } else { 
+		                    tip = super.getToolTipText(e);
+		                }
+	                	
+	                }else{
+	                	tip = super.getToolTipText(e);
+	                }
+	                return tip;
+	            }
+	 
 		};
 		pnlWarnings = new JPanel();
 		lblWarnigs = new JLabel();
@@ -952,7 +1031,7 @@ public abstract class IPedidos extends javax.swing.JInternalFrame implements Foc
 										.addPreferredGap(ComponentPlacement.RELATED)
 										.addComponent(pnlTres, GroupLayout.DEFAULT_SIZE, 138, Short.MAX_VALUE)
 										.addPreferredGap(ComponentPlacement.RELATED)
-										.addComponent(pnlCuatro, GroupLayout.DEFAULT_SIZE, 129, Short.MAX_VALUE)
+										.addComponent(pnlCuatro, GroupLayout.DEFAULT_SIZE, 129, Short.MAX_VALUE)//129
 										.addContainerGap()));
 		pnlInformacionGeneralLayout.setVerticalGroup(pnlInformacionGeneralLayout.createParallelGroup(Alignment.LEADING)
 				.addGroup(pnlInformacionGeneralLayout.createSequentialGroup().addContainerGap()
@@ -994,7 +1073,7 @@ public abstract class IPedidos extends javax.swing.JInternalFrame implements Foc
 		mnuToolBarMiddle.add(btnEliminar);
 		mnuToolBarMiddle.add(separador3);
 
-		btnConsultaCapturaDinamica.setText("Consulta y Captura Dinámica");
+		btnConsultaCapturaDinamica.setText("Consulta Dinámica");
 		btnConsultaCapturaDinamica.setBorder(new SoftBevelBorder(BevelBorder.RAISED));
 		btnConsultaCapturaDinamica.setFocusable(false);
 		btnConsultaCapturaDinamica.setHorizontalTextPosition(SwingConstants.CENTER);
@@ -1049,7 +1128,7 @@ public abstract class IPedidos extends javax.swing.JInternalFrame implements Foc
 		mnuToolBarMiddle.add(btnMaterialNuevo);
 		
 		mnuToolBarMiddle.add(separador7);
-		btnVentaCruzada.setText("Venta Cruzada");
+		btnVentaCruzada.setText("Vta. Crz.");
 		btnVentaCruzada.setBackground(Color.ORANGE);
 		btnVentaCruzada.setBorder(new SoftBevelBorder(BevelBorder.RAISED));
 		btnVentaCruzada.setFocusable(false);
@@ -1064,7 +1143,7 @@ public abstract class IPedidos extends javax.swing.JInternalFrame implements Foc
 		mnuToolBarMiddle.add(btnVentaCruzada);
 		
 		mnuToolBarMiddle.add(separador8);
-		btnVentaCruzadaCliente.setText("Venta Cruzada por Categoria");
+		btnVentaCruzadaCliente.setText("Vta. Crz. Cat.");
 		btnVentaCruzadaCliente.setBorder(new SoftBevelBorder(BevelBorder.RAISED));
 		btnVentaCruzadaCliente.setFocusable(false);
 		btnVentaCruzadaCliente.setHorizontalTextPosition(SwingConstants.CENTER);
@@ -1075,8 +1154,21 @@ public abstract class IPedidos extends javax.swing.JInternalFrame implements Foc
 			}
 		});
 		mnuToolBarMiddle.add(btnVentaCruzadaCliente);
-		
+
 		mnuToolBarMiddle.add(separador9);
+		btnPromociones.setText("Promociones");
+		btnPromociones.setBorder(new SoftBevelBorder(BevelBorder.RAISED));
+		btnPromociones.setFocusable(false);
+		btnPromociones.setHorizontalTextPosition(SwingConstants.CENTER);
+		btnPromociones.setVerticalTextPosition(SwingConstants.BOTTOM);
+		btnPromociones.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				btmMostrarPromocionesActionPerformed();
+			}
+		});
+		mnuToolBarMiddle.add(btnPromociones);
+
+		mnuToolBarMiddle.add(separador10);
 		btnResultadoMarca.setText("Resultado Marca");
 		btnResultadoMarca.setBorder(new SoftBevelBorder(BevelBorder.RAISED));
 		btnResultadoMarca.setFocusable(false);
@@ -1514,6 +1606,11 @@ public abstract class IPedidos extends javax.swing.JInternalFrame implements Foc
 			    "Categoria","Venta/Real","Oportunidad","Cump"
 			};
 			JTable table = new JTable(rows, cols);
+			DefaultTableCellRenderer tcr = new DefaultTableCellRenderer();
+			tcr.setHorizontalAlignment(SwingConstants.RIGHT);
+			table.getColumnModel().getColumn(1).setCellRenderer(tcr);
+			table.getColumnModel().getColumn(2).setCellRenderer(tcr);
+			table.getColumnModel().getColumn(3).setCellRenderer(tcr);
 			JOptionPane optionpane = new JOptionPane(new JScrollPane(table),JOptionPane.PLAIN_MESSAGE,
 					JOptionPane.DEFAULT_OPTION,null,null,null);
 			JDialog dialog = optionpane.createDialog("Venta Cruzada Por Categoria");
@@ -1524,6 +1621,30 @@ public abstract class IPedidos extends javax.swing.JInternalFrame implements Foc
 		}
 	}
 
+	protected void btmMostrarPromocionesActionPerformed() {
+		try {
+			Object[][] rows = getPromociones();
+			Object[] cols = {
+			    "Familia 1","Titulo","Familia 2","Descripcion","Fecha de Vigencia"
+			};
+			JTable table = new JTable(rows, cols);
+			table.getColumnModel().getColumn(0).setMaxWidth(60);
+			table.getColumnModel().getColumn(1).setMaxWidth(150);
+			table.getColumnModel().getColumn(2).setMaxWidth(60);
+			table.getColumnModel().getColumn(3).setMaxWidth(800);
+			table.getColumnModel().getColumn(4).setMaxWidth(200);
+			JOptionPane optionpane = new JOptionPane(new JScrollPane(table),JOptionPane.PLAIN_MESSAGE,
+					JOptionPane.DEFAULT_OPTION,null,null,null);
+			JDialog dialog = optionpane.createDialog("Promociones");
+			dialog.setPreferredSize(new Dimension(1000,300));
+			dialog.pack();
+			dialog.setVisible(true);
+		} catch (Exception e) {
+			Mensaje.mostrarError(e.getMessage());
+			Util.mostrarExcepcion(e);
+		}
+	}
+	
 	protected void btnSimularTodoActionPerformed(ActionEvent evt) {
 		simularPreciosTodosMateriales();
 		establecerCursorPrimeraPosicionLibre();
@@ -5011,28 +5132,49 @@ public abstract class IPedidos extends javax.swing.JInternalFrame implements Foc
 		colVentCrz = impl.getListVentaCruzadaCliente(strCodigoCliente);
 		rows = new Object[colVentCrz.size()+1][4];
 		int i=0;
-		Double dblTotalVentaReal = 0d;
+		int intTotalVentaReal = 0;
 		int intTotalOportunidad = 0;
 		int intTotalCumpl = 0;
 		for(BeanVentaCruzada vtacrz: colVentCrz){
 			rows[i][0] = vtacrz.getStrCategoria();
 			rows[i][1] = vtacrz.getDblVentaReal();
-			dblTotalVentaReal += vtacrz.getDblVentaReal();
+			intTotalVentaReal += vtacrz.getDblVentaReal()>0?1:0;
 			rows[i][2] = vtacrz.getDblOportunidad();
 			intTotalOportunidad += vtacrz.getDblOportunidad()>0?1:0;
-			Double dblCumpl = (vtacrz.getDblVentaReal()/vtacrz.getDblObjetivo())*100;
+			Double dblCumpl = (vtacrz.getDblVentaReal()/vtacrz.getDblOportunidad())*100;
 			rows[i][3] = String.format("%.2f",dblCumpl)+"%";
-			intTotalCumpl += dblCumpl>0?1:0;
+			intTotalCumpl += dblCumpl>0.00?1:0;
 			i++;
 		}
 		
 		rows[i][0] = "TOTAL";
-		rows[i][1] = dblTotalVentaReal;
+		rows[i][1] = intTotalVentaReal;
 		rows[i][2] = intTotalOportunidad;
-		Double dblPromCumpl = (double) ((intTotalCumpl/i)*100);
-		rows[i][3] = String.format("%.2f",dblPromCumpl)+"%";;
+		double dblPromCumpl = (double)intTotalCumpl/i;
+		rows[i][3] = String.format("%.2f",dblPromCumpl*100)+"%";;
 		return rows;
 	}
+	
+	public Object[][] getPromociones(){
+		Object[][] rows = null;
+		List<BeanPromocion> colProm = new ArrayList();
+		SqlMaterialImpl impl = new SqlMaterialImpl();
+		colProm = impl.getListPromociones(cliente.getStrIdCliente(), cliente.getStrGrupoVentas(), cliente.getStrCodCanalDist());
+		rows = new Object[colProm.size()][5];
+		int i=0;
+		int intTotalVentaReal = 0;
+		int intTotalOportunidad = 0;
+		int intTotalCumpl = 0;
+		for(BeanPromocion prom: colProm){
+			rows[i][0] = prom.getStrFamilia1();
+			rows[i][1] = prom.getStrTitulo();
+			rows[i][2] = prom.getStrFamilia2();
+			rows[i][3] = prom.getStrDescripcion();
+			rows[i][4] = Util.convierteFecha(prom.getStrFechaVigenciaDesde()) + " - "+Util.convierteFecha(prom.getStrFechaVigenciaHasta());
+			i++;
+		}
+		return rows;
+	} 
 	
 	public String verificarVisitas(String strMensaje, String codigoCliente){
 		BeanDato usuario = Promesa.datose.get(0);
@@ -5492,6 +5634,7 @@ public abstract class IPedidos extends javax.swing.JInternalFrame implements Foc
 	protected javax.swing.JButton btnMaterialNuevo;
 	protected javax.swing.JButton btnVentaCruzada;
 	protected javax.swing.JButton btnVentaCruzadaCliente;
+	protected javax.swing.JButton btnPromociones;
 	protected javax.swing.JButton btnResultadoMarca;
 	protected javax.swing.JPanel jPanel9;
 	protected javax.swing.JPanel panelClaseRiesgo;
@@ -5539,6 +5682,7 @@ public abstract class IPedidos extends javax.swing.JInternalFrame implements Foc
 	protected javax.swing.JToolBar.Separator separador7;
 	protected javax.swing.JToolBar.Separator separador8;
 	protected javax.swing.JToolBar.Separator separador9;
+	protected javax.swing.JToolBar.Separator separador10;
 	protected javax.swing.JTable tblPedidos;
 	protected javax.swing.JTextField txtBloqEntrega;
 	protected javax.swing.JTextField txtClasRiesgo;

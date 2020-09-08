@@ -385,6 +385,12 @@ public class ISincronizacionPedidos extends javax.swing.JInternalFrame {
 			mensaje[0] = SincronizacionPedidos.sincronizarVentaCruzada(codigoVendedor);
 			cantidadRegistros = sqlSincronizacionImpl.filasTabla("PROFFLINE_TB_MATERIAL_VENTA_CRUZADA") + sqlSincronizacionImpl.filasTabla("PROFFLINE_TB_VENTA_CRUZADA");
 			break;
+		case 35:
+			codigoVendedor = Promesa.datose.get(0).getStrCodigo();
+			mensaje[1] = "Mercadeo";
+			mensaje[0] = SincronizacionPedidos.sincronizarMercadeo(codigoVendedor);
+			cantidadRegistros = sqlSincronizacionImpl.filasTabla("PROFFLINE_TB_MATERIAL_MERCADEO") + sqlSincronizacionImpl.filasTabla("PROFFLINE_TB_MATERIAL_PROMOCION");
+			break;
 		default:
 			mensaje[1] = "No se ha seleccionado ninguna tabla";
 			mensaje[0] = "E";
@@ -593,6 +599,9 @@ public class ISincronizacionPedidos extends javax.swing.JInternalFrame {
 			break;
 		case 34:
 			cantidadRegistros = sqlSincronizacionImpl.filasTabla("PROFFLINE_TB_MATERIAL_VENTA_CRUZADA") + sqlSincronizacionImpl.filasTabla("PROFFLINE_TB_VENTA_CRUZADA");
+			break;
+		case 35:
+			cantidadRegistros = sqlSincronizacionImpl.filasTabla("PROFFLINE_TB_MATERIAL_MERCADEO") + sqlSincronizacionImpl.filasTabla("PROFFLINE_TB_MATERIAL_PROMOCION");
 			break;
 		default:
 			cantidadRegistros = 0;
